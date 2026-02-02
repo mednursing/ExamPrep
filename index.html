@@ -844,18 +844,15 @@ let hasActiveChat = false;
 
 $zoho.salesiq.ready = function () {
     try {
-        // Show chat widget
-        $zoho.salesiq.chatwindow.visible("show");
-
-        // Check for active chat on reload
+        // Check for active chat on reload (don't show widget yet)
         $zoho.salesiq.chat.continue(function (visitid, data) {
             hasActiveChat = !!(data && data.chatstatus);
         });
 
-        // Button click handler
+        // Button click handler - only show widget when user clicks
         document.getElementById("continueChatBtn")
             .addEventListener("click", function () {
-
+                // Show chat widget only on user action
                 $zoho.salesiq.chatwindow.visible("show");
 
                 if (hasActiveChat) {
@@ -870,30 +867,12 @@ $zoho.salesiq.ready = function () {
 
     } catch (e) {
         console.error("SalesIQ error:", e);
+        // Fallback: show widget and start chat
+        $zoho.salesiq.chatwindow.visible("show");
         $zoho.salesiq.visitor.question("Hello");
         $zoho.salesiq.chat.start();
     }
 };
 </script>
-
- <!--   <script>
-        $zoho.salesiq.ready = function () {
-                        $zoho.salesiq.chatwindow.visible("show");
-
-          document.getElementById("continueChatBtn").addEventListener("click", function () {
-            // 1) Open widget
-            $zoho.salesiq.chatwindow.visible("show");
-        
-            // 2) Prefer continuing existing conversation (if any)
-            try {
-              $zoho.salesiq.chat.continue();
-            } catch (e) {}
-        
-            // 3) Otherwise start a new chat (question is mandatory before start)
-            $zoho.salesiq.visitor.question("Hi, I need help continuing my task.");
-            $zoho.salesiq.chat.start();
-          });
-        };
-</script>-->
 </body>
 </html>
