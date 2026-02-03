@@ -551,7 +551,7 @@
                 <span>🔒</span>
                 <span>AUTHORIZED CERTIFICATION PORTAL</span>
             </div>
-            <h1>Medical Professional Certification Excellence</h1>
+            <h1>Medical Professional Certification Excellences</h1>
             <p>Elevate your medical career with internationally recognized certification exams. Join thousands of healthcare professionals achieving excellence through our premium certification programs.</p>
             <div class="cta-buttons">
                 <a href="#cta-section" class="btn btn-primary">Get Started →</a>
@@ -844,19 +844,48 @@
 $zoho.salesiq.ready = function () {
     try {
         // Fixed z-index to prevent flickering
-        var zsiqWidget = document.getElementById('zsiq_float');
-        if (zsiqWidget) {
-            zsiqWidget.style.zIndex = '999999';
-            zsiqWidget.style.position = 'fixed';
-        }
+        setTimeout(function() {
+            var zsiqWidget = document.getElementById('zsiq_float');
+            if (zsiqWidget) {
+                zsiqWidget.style.zIndex = '999999';
+                zsiqWidget.style.position = 'fixed';
+            }
+        }, 1000);
         
-        // Minimal setup - let SalesIQ handle everything automatically
+        // Force show chat widget to bypass trigger errors
+        $zoho.salesiq.chatwindow.visible("show");
+        
+        // Auto-start chat functionality
+        $zoho.salesiq.floatbutton.click(function() {
+            try {
+                // Try to start chat with proper initialization
+                $zoho.salesiq.visitor.question("Hello, I need assistance.");
+                $zoho.salesiq.chat.start();
+            } catch (err) {
+                console.warn("Chat start fallback:", err);
+            }
+        });
+        
         console.log("SalesIQ loaded successfully");
         
     } catch (e) {
         console.error("SalesIQ error:", e);
+        // Even on error, try to show the widget
+        try {
+            $zoho.salesiq.chatwindow.visible("show");
+        } catch (err) {
+            console.error("Failed to show widget:", err);
+        }
     }
 };
+
+// Global error handler for Zoho SalesIQ
+window.addEventListener('error', function(e) {
+    if (e.message && e.message.includes('salesiq')) {
+        console.warn('SalesIQ error intercepted, continuing normally');
+        e.preventDefault();
+    }
+});
 </script>
 </body>
 </html>
