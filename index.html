@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Medical Professional Certification Exam - Premium Authorization Portal">
     <title>Medical Professional Certification | Authorized Exam Portal</title>
-    <link rel="icon" href="data:,">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
@@ -551,7 +550,7 @@
                 <span>🔒</span>
                 <span>AUTHORIZED CERTIFICATION PORTAL</span>
             </div>
-            <h1>1 Medical Professional Certification Excellences</h1>
+            <h1>2 Medical Professional Certification Excellence</h1>
             <p>Elevate your medical career with internationally recognized certification exams. Join thousands of healthcare professionals achieving excellence through our premium certification programs.</p>
             <div class="cta-buttons">
                 <a href="#cta-section" class="btn btn-primary">Get Started →</a>
@@ -841,24 +840,60 @@
     <script>window.$zoho=window.$zoho || {};$zoho.salesiq=$zoho.salesiq||{ready:function(){}}</script><script id="zsiqscript" src="https://salesiq.zohopublic.com/widget?wc=siq9c17f4e59974eaffde67f13c0f4db1a934e57e931b461759881ae52416a5f018" defer></script>
 
  <script>
-// Simple, clean SalesIQ setup - no custom triggers
+let hasActiveChat = false;
+
 $zoho.salesiq.ready = function () {
     try {
-        // Apply z-index fix after widget loads
-        setTimeout(function() {
-            var zsiqWidget = document.getElementById('zsiq_float');
-            if (zsiqWidget) {
-                zsiqWidget.style.zIndex = '999999';
-                zsiqWidget.style.position = 'fixed';
-            }
-        }, 1500);
-        
-        console.log("SalesIQ loaded successfully");
-        
+        // Show chat widget
+        $zoho.salesiq.chatwindow.visible("show");
+
+        // Check for active chat on reload
+        $zoho.salesiq.chat.continue(function (visitid, data) {
+            hasActiveChat = !!(data && data.chatstatus);
+        });
+
+        // Button click handler
+        document.getElementById("continueChatBtn")
+            .addEventListener("click", function () {
+
+                $zoho.salesiq.chatwindow.visible("show");
+
+                if (hasActiveChat) {
+                    // Resume existing chat
+                    $zoho.salesiq.chat.continue();
+                } else {
+                    // Start new chat
+                    $zoho.salesiq.visitor.question("Hi, I need help.");
+                    $zoho.salesiq.chat.start();
+                }
+            });
+
     } catch (e) {
-        console.error("SalesIQ initialization error:", e);
+        console.error("SalesIQ error:", e);
+        $zoho.salesiq.visitor.question("Hello");
+        $zoho.salesiq.chat.start();
     }
 };
 </script>
+
+ <!--   <script>
+        $zoho.salesiq.ready = function () {
+                        $zoho.salesiq.chatwindow.visible("show");
+
+          document.getElementById("continueChatBtn").addEventListener("click", function () {
+            // 1) Open widget
+            $zoho.salesiq.chatwindow.visible("show");
+        
+            // 2) Prefer continuing existing conversation (if any)
+            try {
+              $zoho.salesiq.chat.continue();
+            } catch (e) {}
+        
+            // 3) Otherwise start a new chat (question is mandatory before start)
+            $zoho.salesiq.visitor.question("Hi, I need help continuing my task.");
+            $zoho.salesiq.chat.start();
+          });
+        };
+</script>-->
 </body>
 </html>
