@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Medical Professional Certification Exam - Premium Authorization Portal">
     <title>Medical Professional Certification | Authorized Exam Portal</title>
+    <link rel="icon" href="data:,">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
@@ -840,37 +841,20 @@
     <script>window.$zoho=window.$zoho || {};$zoho.salesiq=$zoho.salesiq||{ready:function(){}}</script><script id="zsiqscript" src="https://salesiq.zohopublic.com/widget?wc=siq9c17f4e59974eaffde67f13c0f4db1a934e57e931b461759881ae52416a5f018" defer></script>
 
  <script>
-let hasActiveChat = false;
-
 $zoho.salesiq.ready = function () {
     try {
-        // Check for active chat on reload (don't show widget yet)
-        $zoho.salesiq.chat.continue(function (visitid, data) {
-            hasActiveChat = !!(data && data.chatstatus);
-        });
-
-        // Button click handler - only show widget when user clicks
-        document.getElementById("continueChatBtn")
-            .addEventListener("click", function () {
-                // Show chat widget only on user action
-                $zoho.salesiq.chatwindow.visible("show");
-
-                if (hasActiveChat) {
-                    // Resume existing chat
-                    $zoho.salesiq.chat.continue();
-                } else {
-                    // Start new chat
-                    $zoho.salesiq.visitor.question("Hi, I need help.");
-                    $zoho.salesiq.chat.start();
-                }
-            });
-
+        // Fixed z-index to prevent flickering
+        var zsiqWidget = document.getElementById('zsiq_float');
+        if (zsiqWidget) {
+            zsiqWidget.style.zIndex = '999999';
+            zsiqWidget.style.position = 'fixed';
+        }
+        
+        // Minimal setup - let SalesIQ handle everything automatically
+        console.log("SalesIQ loaded successfully");
+        
     } catch (e) {
         console.error("SalesIQ error:", e);
-        // Fallback: show widget and start chat
-        $zoho.salesiq.chatwindow.visible("show");
-        $zoho.salesiq.visitor.question("Hello");
-        $zoho.salesiq.chat.start();
     }
 };
 </script>
