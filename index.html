@@ -837,9 +837,76 @@
         }
     </script>
 
-    <!-- Zoho SalesIQ Chat Widget -->
+    <!-- Zoho SalesIQ Chat Widget with Debug Logging -->
+    <script>
+    // Intercept XMLHttpRequest to debug 500 errors
+    (function() {
+        const originalOpen = XMLHttpRequest.prototype.open;
+        const originalSend = XMLHttpRequest.prototype.send;
+        
+        XMLHttpRequest.prototype.open = function(method, url) {
+            this._url = url;
+            this._method = method;
+            return originalOpen.apply(this, arguments);
+        };
+        
+        XMLHttpRequest.prototype.send = function(data) {
+            const xhr = this;
+            
+            // Log Zoho API requests
+            if (this._url && this._url.includes('salesiq.zohopublic.com')) {
+                console.log('🔵 Zoho Request:', {
+                    method: this._method,
+                    url: this._url,
+                    data: data
+                });
+                
+                // Monitor response
+                this.addEventListener('load', function() {
+                    if (xhr.status === 500) {
+                        console.error('🔴 500 ERROR Response:', {
+                            status: xhr.status,
+                            statusText: xhr.statusText,
+                            url: xhr._url,
+                            response: xhr.responseText,
+                            headers: xhr.getAllResponseHeaders()
+                        });
+                    } else if (xhr.status >= 200 && xhr.status < 300) {
+                        console.log('✅ Success:', xhr.status, xhr._url);
+                    }
+                });
+                
+                this.addEventListener('error', function() {
+                    console.error('❌ Network Error:', xhr._url);
+                });
+            }
+            
+            return originalSend.apply(this, arguments);
+        };
+    })();
+    
+    // Capture console errors
+    window.addEventListener('unhandledrejection', function(event) {
+        console.error('🔴 Unhandled Promise Rejection:', {
+            reason: event.reason,
+            promise: event.promise
+        });
+    });
+    </script>
+    
     <script>window.$zoho=window.$zoho || {};$zoho.salesiq=$zoho.salesiq||{ready:function(){}}</script>
     <script id="zsiqscript" src="https://salesiq.zohopublic.com/widget?wc=siq9c17f4e59974eaffde67f13c0f4db1a934e57e931b461759881ae52416a5f018" defer></script>
+    
+    <script>
+    // Debug Zoho widget state
+    $zoho.salesiq.ready = function() {
+        console.log('✅ Zoho SalesIQ Ready');
+        console.log('📊 Widget State:', {
+            zoho: window.$zoho,
+            salesiq: window.$zoho.salesiq
+        });
+    };
+    </script>
 
 </body>
 </html>
