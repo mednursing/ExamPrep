@@ -550,7 +550,7 @@
                 <span>🔒</span>
                 <span>AUTHORIZED CERTIFICATION PORTAL</span>
             </div>
-            <h1>3 Medical Professional Certification Excellence</h1>
+            <h1>Medical Professional Certification Excellence</h1>
             <p>Elevate your medical career with internationally recognized certification exams. Join thousands of healthcare professionals achieving excellence through our premium certification programs.</p>
             <div class="cta-buttons">
                 <a href="#cta-section" class="btn btn-primary">Get Started →</a>
@@ -837,85 +837,44 @@
         }
     </script>
 
-    <!-- Zoho SalesIQ Chat Widget - Fixed Load Issue -->
-    <script>
-        // Initialize Zoho namespace immediately
-        window.$zoho = window.$zoho || {};
-        window.$zoho.salesiq = window.$zoho.salesiq || {
-            ready: function(){}
-        };
-        
-        let hasActiveChat = false;
-        let chatInitialized = false;
-        
-        // Define ready function before script loads
-        window.$zoho.salesiq.ready = function () {
-            if (chatInitialized) {
-                console.log('SalesIQ already initialized, skipping...');
-                return;
-            }
-            chatInitialized = true;
-            
-            console.log('SalesIQ widget loaded successfully');
-            
-            try {
-                // Show chat widget
+    <script>window.$zoho=window.$zoho || {};$zoho.salesiq=$zoho.salesiq||{ready:function(){}}</script><script id="zsiqscript" src="https://salesiq.zohopublic.com/widget?wc=siq9c17f4e59974eaffde67f13c0f4db1a934e57e931b461759881ae52416a5f018" defer></script>
+
+ <script>
+let hasActiveChat = false;
+
+$zoho.salesiq.ready = function () {
+    try {
+        // Show chat widget
+        $zoho.salesiq.chatwindow.visible("show");
+
+        // Check for active chat on reload
+        $zoho.salesiq.chat.continue(function (visitid, data) {
+            hasActiveChat = !!(data && data.chatstatus);
+        });
+
+        // Button click handler
+        document.getElementById("continueChatBtn")
+            .addEventListener("click", function () {
+
                 $zoho.salesiq.chatwindow.visible("show");
 
-                // Check for active chat on reload
-                $zoho.salesiq.chat.continue(function (visitid, data) {
-                    hasActiveChat = !!(data && data.chatstatus);
-                    console.log('Active chat status:', hasActiveChat);
-                });
-
-                // Button click handler
-                const chatBtn = document.getElementById("continueChatBtn");
-                if (chatBtn) {
-                    chatBtn.addEventListener("click", function () {
-                        console.log('Chat button clicked');
-                        
-                        $zoho.salesiq.chatwindow.visible("show");
-
-                        if (hasActiveChat) {
-                            // Resume existing chat
-                            $zoho.salesiq.chat.continue();
-                        } else {
-                            // Start new chat
-                            $zoho.salesiq.visitor.question("Hi, I need help.");
-                            $zoho.salesiq.chat.start();
-                        }
-                    });
-                }
-
-            } catch (e) {
-                console.error("SalesIQ initialization error:", e);
-                try {
-                    $zoho.salesiq.visitor.question("Hello");
+                if (hasActiveChat) {
+                    // Resume existing chat
+                    $zoho.salesiq.chat.continue();
+                } else {
+                    // Start new chat
+                    $zoho.salesiq.visitor.question("Hi, I need help.");
                     $zoho.salesiq.chat.start();
-                } catch (fallbackError) {
-                    console.error("SalesIQ fallback error:", fallbackError);
                 }
-            }
-        };
-        
-        // Load script asynchronously with error handling
-        (function() {
-            var script = document.createElement('script');
-            script.id = 'zsiqscript';
-            script.src = 'https://salesiq.zohopublic.com/widget?wc=siq9c17f4e59974eaffde67f13c0f4db1a934e57e931b461759881ae52416a5f018';
-            script.async = true;
-            
-            script.onerror = function() {
-                console.error('Failed to load SalesIQ widget');
-            };
-            
-            script.onload = function() {
-                console.log('SalesIQ script loaded');
-            };
-            
-            document.body.appendChild(script);
-        })();
-    </script>
+            });
+
+    } catch (e) {
+        console.error("SalesIQ error:", e);
+        $zoho.salesiq.visitor.question("Hello");
+        $zoho.salesiq.chat.start();
+    }
+};
+</script>
 
  <!--   <script>
         $zoho.salesiq.ready = function () {
