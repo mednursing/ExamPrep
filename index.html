@@ -550,7 +550,7 @@
                 <span>🔒</span>
                 <span>AUTHORIZED CERTIFICATION PORTAL</span>
             </div>
-            <h1>Medical Professional Certification Excellence</h1>
+            <h1>4 Medical Professional Certification Excellence</h1>
             <p>Elevate your medical career with internationally recognized certification exams. Join thousands of healthcare professionals achieving excellence through our premium certification programs.</p>
             <div class="cta-buttons">
                 <a href="#cta-section" class="btn btn-primary">Get Started →</a>
@@ -841,6 +841,41 @@
 
  <script>
 let hasActiveChat = false;
+let sessionErrorCount = 0;
+
+// Listen for network errors globally - catches 500 errors
+window.addEventListener('unhandledrejection', function(event) {
+    // Check if it's a Zoho 500 error
+    if (event.reason && event.reason.error) {
+        sessionErrorCount++;
+        console.warn('Chat session error detected, count:', sessionErrorCount);
+        
+        // If we get repeated errors, the session is corrupted
+        if (sessionErrorCount >= 2) {
+            console.log('Clearing corrupted chat session and reloading...');
+            clearCorruptedSession();
+        }
+    }
+});
+
+function clearCorruptedSession() {
+    // Clear only Zoho-related storage
+    Object.keys(localStorage).forEach(key => {
+        if (key.includes('zsiq') || key.includes('zoho') || key.includes('salesiq')) {
+            localStorage.removeItem(key);
+        }
+    });
+    
+    Object.keys(sessionStorage).forEach(key => {
+        if (key.includes('zsiq') || key.includes('zoho') || key.includes('salesiq')) {
+            sessionStorage.removeItem(key);
+        }
+    });
+    
+    // Reload the page to start fresh (like force refresh)
+    sessionErrorCount = 0;
+    setTimeout(() => location.reload(), 1000);
+}
 
 $zoho.salesiq.ready = function () {
     try {
@@ -850,12 +885,13 @@ $zoho.salesiq.ready = function () {
         // Check for active chat on reload
         $zoho.salesiq.chat.continue(function (visitid, data) {
             hasActiveChat = !!(data && data.chatstatus);
+            console.log('Chat continuation checked:', hasActiveChat);
         });
 
         // Button click handler
-        document.getElementById("continueChatBtn")
-            .addEventListener("click", function () {
-
+        const chatBtn = document.getElementById("continueChatBtn");
+        if (chatBtn) {
+            chatBtn.addEventListener("click", function () {
                 $zoho.salesiq.chatwindow.visible("show");
 
                 if (hasActiveChat) {
@@ -867,11 +903,23 @@ $zoho.salesiq.ready = function () {
                     $zoho.salesiq.chat.start();
                 }
             });
+        }
 
     } catch (e) {
-        console.error("SalesIQ error:", e);
-        $zoho.salesiq.visitor.question("Hello");
-        $zoho.salesiq.chat.start();
+        console.error("SalesIQ initialization error:", e);
+        sessionErrorCount++;
+        
+        // If repeated errors, clear corrupted session
+        if (sessionErrorCount >= 2) {
+            clearCorruptedSession();
+        } else {
+            try {
+                $zoho.salesiq.visitor.question("Hello");
+                $zoho.salesiq.chat.start();
+            } catch (startError) {
+                console.error("Failed to start chat:", startError);
+            }
+        }
     }
 };
 </script>
