@@ -550,7 +550,7 @@
                 <span>🔒</span>
                 <span>AUTHORIZED CERTIFICATION PORTAL</span>
             </div>
-            <h1>5 Medical Professional Certification Excellence</h1>
+            <h1>6 Medical Professional Certification Excellence</h1>
             <p>Elevate your medical career with internationally recognized certification exams. Join thousands of healthcare professionals achieving excellence through our premium certification programs.</p>
             <div class="cta-buttons">
                 <a href="#cta-section" class="btn btn-primary">Get Started →</a>
@@ -837,9 +837,9 @@
         }
     </script>
 
-    <!-- Zoho SalesIQ Chat Widget with Debug Logging -->
+    <!-- Zoho SalesIQ Chat Widget with Enhanced Debug Logging -->
     <script>
-    // Intercept XMLHttpRequest to debug 500 errors
+    // Enhanced XMLHttpRequest interceptor
     (function() {
         const originalOpen = XMLHttpRequest.prototype.open;
         const originalSend = XMLHttpRequest.prototype.send;
@@ -847,37 +847,72 @@
         XMLHttpRequest.prototype.open = function(method, url) {
             this._url = url;
             this._method = method;
+            this._startTime = Date.now();
             return originalOpen.apply(this, arguments);
         };
         
         XMLHttpRequest.prototype.send = function(data) {
             const xhr = this;
             
-            // Log Zoho API requests
+            // Capture request data before sending
             if (this._url && this._url.includes('salesiq.zohopublic.com')) {
-                console.log('🔵 Zoho Request:', {
-                    method: this._method,
-                    url: this._url,
-                    data: data
-                });
+                this._requestData = data;
                 
-                // Monitor response
-                this.addEventListener('load', function() {
+                console.group('🔵 Zoho API Request');
+                console.log('Method:', this._method);
+                console.log('URL:', this._url);
+                console.log('Request Data:', data);
+                try {
+                    if (data) console.log('Parsed Data:', JSON.parse(data));
+                } catch(e) {}
+                console.groupEnd();
+                
+                // Add listeners BEFORE sending
+                this.addEventListener('loadend', function() {
+                    const duration = Date.now() - xhr._startTime;
+                    
                     if (xhr.status === 500) {
-                        console.error('🔴 500 ERROR Response:', {
-                            status: xhr.status,
-                            statusText: xhr.statusText,
-                            url: xhr._url,
-                            response: xhr.responseText,
-                            headers: xhr.getAllResponseHeaders()
-                        });
+                        console.group('🔴 500 ERROR - FULL DETAILS');
+                        console.error('Status:', xhr.status, xhr.statusText);
+                        console.error('Duration:', duration + 'ms');
+                        console.error('Request URL:', xhr._url);
+                        console.error('Request Method:', xhr._method);
+                        console.error('Request Data:', xhr._requestData);
+                        console.error('Response Text:', xhr.responseText);
+                        console.error('Response Type:', xhr.responseType);
+                        console.error('All Headers:', xhr.getAllResponseHeaders());
+                        
+                        // Try to parse error response
+                        try {
+                            const errorData = JSON.parse(xhr.responseText);
+                            console.error('📋 Parsed Error:', errorData);
+                        } catch(e) {
+                            console.error('❌ Could not parse error response');
+                        }
+                        
+                        // Log visitor ID from URL
+                        const visitorMatch = xhr._url.match(/visitors\/([^\/]+)/);
+                        if (visitorMatch) {
+                            console.error('👤 Visitor ID:', visitorMatch[1]);
+                        }
+                        
+                        console.groupEnd();
                     } else if (xhr.status >= 200 && xhr.status < 300) {
-                        console.log('✅ Success:', xhr.status, xhr._url);
+                        console.log('✅ Success:', xhr.status, xhr._url.substring(0, 80) + '...', `(${duration}ms)`);
+                    } else if (xhr.status >= 400) {
+                        console.error('⚠️ HTTP Error:', xhr.status, xhr._url);
                     }
                 });
                 
                 this.addEventListener('error', function() {
-                    console.error('❌ Network Error:', xhr._url);
+                    console.group('❌ Network Error');
+                    console.error('URL:', xhr._url);
+                    console.error('Request Data:', xhr._requestData);
+                    console.groupEnd();
+                });
+                
+                this.addEventListener('timeout', function() {
+                    console.error('⏱️ Request Timeout:', xhr._url);
                 });
             }
             
@@ -885,13 +920,16 @@
         };
     })();
     
-    // Capture console errors
+    // Capture all console errors
     window.addEventListener('unhandledrejection', function(event) {
-        console.error('🔴 Unhandled Promise Rejection:', {
-            reason: event.reason,
-            promise: event.promise
-        });
+        console.group('🔴 Unhandled Promise Rejection');
+        console.error('Reason:', event.reason);
+        console.error('Promise:', event.promise);
+        console.groupEnd();
     });
+    
+    // Log page load
+    console.log('🚀 Debug logging initialized - watching Zoho SalesIQ requests');
     </script>
     
     <script>window.$zoho=window.$zoho || {};$zoho.salesiq=$zoho.salesiq||{ready:function(){}}</script>
