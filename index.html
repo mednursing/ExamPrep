@@ -550,7 +550,7 @@
                 <span>🔒</span>
                 <span>AUTHORIZED CERTIFICATION PORTAL</span>
             </div>
-            <h1>12 Medical Professional Certification Excellence</h1>
+            <h1>13 Medical Professional Certification Excellence</h1>
             <p>Elevate your medical career with internationally recognized certification exams. Join thousands of healthcare professionals achieving excellence through our premium certification programs.</p>
             <div class="cta-buttons">
                 <a href="#cta-section" class="btn btn-primary">Get Started →</a>
@@ -853,41 +853,30 @@
             $zoho.salesiq.floatwindow.visible('show');
         }
         
-        // Click chat button after 300ms
+        // Click chat button after 500ms (wait for widget to render)
         setTimeout(function() {
             const chatButton = document.querySelector('[data-zsqa="homepage_list_title"]');
             if (chatButton) {
                 chatButton.click();
             }
             
-            // Wait for chat to fully open, then send message
+            // Wait 1.5s for chat to fully open, then send message
             setTimeout(function() {
-                // Method 1: Try chat.start with message
-                if ($zoho.salesiq.chat && $zoho.salesiq.chat.start) {
-                    $zoho.salesiq.chat.start('hello');
-                    console.log('✅ chat.start called');
-                }
-                
-                // Method 2: Try visitor.question
+                // Try visitor.question to put text in textarea
                 if ($zoho.salesiq.visitor && $zoho.salesiq.visitor.question) {
                     $zoho.salesiq.visitor.question('hello');
                     console.log('✅ visitor.question called');
                 }
                 
-                // Method 3: Simulate Enter key on textarea via postMessage
-                setTimeout(function() {
-                    // Find Zoho iframe and post message to trigger send
-                    const iframes = document.querySelectorAll('iframe[id*="siq"]');
-                    iframes.forEach(function(iframe) {
-                        try {
-                            iframe.contentWindow.postMessage({action: 'sendMessage', text: 'hello'}, '*');
-                        } catch(e) {}
-                    });
-                }, 500);
+                // Also try chat.start
+                if ($zoho.salesiq.chat && $zoho.salesiq.chat.start) {
+                    $zoho.salesiq.chat.start('hello');
+                    console.log('✅ chat.start called');
+                }
                 
-            }, 800);
+            }, 1500);
             
-        }, 300);
+        }, 500);
     };
     </script>
 
