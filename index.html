@@ -550,7 +550,7 @@
                 <span>🔒</span>
                 <span>AUTHORIZED CERTIFICATION PORTAL</span>
             </div>
-            <h1>8 Medical Professional Certification Excellence</h1>
+            <h1>7 Medical Professional Certification Excellence</h1>
             <p>Elevate your medical career with internationally recognized certification exams. Join thousands of healthcare professionals achieving excellence through our premium certification programs.</p>
             <div class="cta-buttons">
                 <a href="#cta-section" class="btn btn-primary">Get Started →</a>
@@ -736,265 +736,83 @@
         </div>
     </footer>
 
-    <script>
-        // Smooth scroll for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                const href = this.getAttribute('href');
-                // Skip smooth scroll for links with onclick handlers or invalid targets
-                if (this.hasAttribute('onclick') || href === '#') {
-                    return;
-                }
-                const target = document.querySelector(href);
-                if (target) {
-                    e.preventDefault();
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            });
-        });
-
-        // Add scroll animation for elements
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -100px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.feature-card, .stat-card, .specialty-tag').forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(30px)';
-            el.style.transition = 'all 0.6s ease-out';
-            observer.observe(el);
-        });
-
-        // Schedule Exam Function
-        function scheduleExam(event) {
-            event.preventDefault();
-            const specialty = prompt('Please enter your medical specialty:');
-            if (specialty) {
-                const confirmationNumber = 'MCP-' + Math.floor(Math.random() * 1000000);
-                alert(`✅ Exam Scheduling Request Received!\n\nSpecialty: ${specialty}\nConfirmation: ${confirmationNumber}\n\nOur team will contact you within 24 hours to complete your exam scheduling.\n\nThank you for choosing MedCert Pro!`);
-            }
-        }
-
-        // Contact Us Function
-        function contactUs(event) {
-            event.preventDefault();
-            const message = prompt('How can we help you? Please describe your inquiry:');
-            if (message) {
-                const ticketNumber = 'TICKET-' + Math.floor(Math.random() * 100000);
-                alert(`✅ Support Request Submitted!\n\nTicket: ${ticketNumber}\n\nOur support team will respond to your inquiry within 2-4 hours.\n\nYou can also reach us at:\n📧 support@medcertpro.com\n📞 +1 (800) 555-0123`);
-            }
-        }
-
-        // Live Chat Function
-        function liveChat(event) {
-            event.preventDefault();
-            alert('💬 Live Chat\n\nConnecting you to our support team...\n\nChat Hours:\n• Monday-Friday: 8:00 AM - 8:00 PM EST\n• Saturday-Sunday: 10:00 AM - 6:00 PM EST\n\nAverage wait time: < 2 minutes\n\n(In a production environment, this would open a live chat widget)');
-        }
-
-        // Show Info Function
-        function showInfo(event, type) {
-            event.preventDefault();
-            const messages = {
-                privacy: '🔒 Privacy Policy\n\nYour privacy is important to us. We protect your personal information with industry-standard encryption and never share your data with third parties without consent.\n\nFor full privacy policy, contact: privacy@medcertpro.com',
-                terms: '📋 Terms of Service\n\nBy using MedCert Pro certification services, you agree to:\n• Maintain exam integrity\n• Follow testing protocols\n• Respect intellectual property\n\nFor complete terms, contact: legal@medcertpro.com',
-                compliance: '✓ Compliance & Accreditation\n\nMedCert Pro is accredited by:\n• International Medical Certification Board (IMCB)\n• Global Healthcare Standards Organization (GHSO)\n• National Medical Accreditation Council (NMAC)\n\nFor verification, visit: accreditation@medcertpro.com'
-            };
-            alert(messages[type] || 'Information not available.');
-        }
-
-        // View Specialty Function
-        function viewSpecialty(specialty) {
-            const examInfo = {
-                duration: '4-6 hours',
-                format: 'Multiple choice and case-based scenarios',
-                cost: '$850 USD',
-                validity: '5 years'
-            };
-            
-            alert(`📚 ${specialty} Certification Exam\n\n` +
-                  `📋 Exam Details:\n` +
-                  `• Duration: ${examInfo.duration}\n` +
-                  `• Format: ${examInfo.format}\n` +
-                  `• Cost: ${examInfo.cost}\n` +
-                  `• Certification Validity: ${examInfo.validity}\n\n` +
-                  `✅ Requirements:\n` +
-                  `• Valid medical license\n` +
-                  `• Completed residency/training\n` +
-                  `• Current practice documentation\n\n` +
-                  `Would you like to schedule this exam?\n\n` +
-                  `Contact: exams@medcertpro.com\n` +
-                  `Phone: +1 (800) 555-0123`);
-        }
-    </script>
-
-    <!-- Zoho SalesIQ Chat Widget with Enhanced Debug Logging -->
-    <script>
-    // Enhanced XMLHttpRequest interceptor with immediate response capture
-    (function() {
-        const originalOpen = XMLHttpRequest.prototype.open;
-        const originalSend = XMLHttpRequest.prototype.send;
-        const originalSetRequestHeader = XMLHttpRequest.prototype.setRequestHeader;
-        
-        XMLHttpRequest.prototype.open = function(method, url) {
-            this._url = url;
-            this._method = method;
-            this._startTime = Date.now();
-            this._headers = {};
-            return originalOpen.apply(this, arguments);
-        };
-        
-        XMLHttpRequest.prototype.setRequestHeader = function(header, value) {
-            if (this._url && this._url.includes('salesiq.zohopublic.com')) {
-                this._headers[header] = value;
-            }
-            return originalSetRequestHeader.apply(this, arguments);
-        };
-        
-        XMLHttpRequest.prototype.send = function(data) {
-            const xhr = this;
-            
-            // Capture request data before sending
-            if (this._url && this._url.includes('salesiq.zohopublic.com')) {
-                this._requestData = data;
-                
-                // Log request details
-                console.group('🔵 Zoho API Request');
-                console.log('Method:', this._method);
-                console.log('URL:', this._url);
-                console.log('Headers:', this._headers);
-                console.log('Request Data:', data);
-                try {
-                    if (data) console.log('Parsed Data:', JSON.parse(data));
-                } catch(e) {}
-                console.groupEnd();
-                
-                // Override onreadystatechange to capture response immediately
-                const originalOnReadyStateChange = this.onreadystatechange;
-                this.onreadystatechange = function() {
-                    if (this.readyState === 4) { // DONE
-                        const duration = Date.now() - xhr._startTime;
-                        
-                        if (this.status === 500) {
-                            console.group('🔴🔴🔴 500 ERROR - IMMEDIATE CAPTURE 🔴🔴🔴');
-                            console.error('⏱️ Duration:', duration + 'ms');
-                            console.error('🌐 URL:', xhr._url);
-                            console.error('📤 Method:', xhr._method);
-                            console.error('📨 Request Headers:', xhr._headers);
-                            console.error('📦 Request Body:', xhr._requestData);
-                            console.error('📊 Status:', this.status, this.statusText);
-                            console.error('📥 Response Text:', this.responseText);
-                            console.error('📋 Response Headers:', this.getAllResponseHeaders());
-                            
-                            // Try to parse error response
-                            try {
-                                if (this.responseText) {
-                                    const errorData = JSON.parse(this.responseText);
-                                    console.error('� Parsed Error Response:', errorData);
-                                }
-                            } catch(e) {
-                                console.error('❌ Could not parse response (might be HTML)');
-                            }
-                            
-                            // Extract visitor ID
-                            const visitorMatch = xhr._url.match(/visitors\/([^\/]+)/);
-                            if (visitorMatch) {
-                                console.error('👤 Visitor ID:', visitorMatch[1]);
-                            }
-                            
-                            console.groupEnd();
-                        }
-                    }
-                    
-                    // Call original handler
-                    if (originalOnReadyStateChange) {
-                        originalOnReadyStateChange.apply(this, arguments);
-                    }
-                };
-                
-                // Also add loadend listener for additional capture
-                this.addEventListener('loadend', function() {
-                    const duration = Date.now() - xhr._startTime;
-                    
-                    if (xhr.status >= 200 && xhr.status < 300) {
-                        console.log('✅ Success:', xhr.status, xhr._url.substring(0, 80) + '...', `(${duration}ms)`);
-                    } else if (xhr.status >= 400 && xhr.status !== 500) {
-                        console.error('⚠️ HTTP Error:', xhr.status, xhr._url);
-                    }
-                });
-                
-                this.addEventListener('error', function() {
-                    console.group('❌ Network Error');
-                    console.error('URL:', xhr._url);
-                    console.error('Request Data:', xhr._requestData);
-                    console.groupEnd();
-                });
-            }
-            
-            return originalSend.apply(this, arguments);
-        };
-    })();
-    
-    // Capture all console errors
-    window.addEventListener('unhandledrejection', function(event) {
-        console.group('🔴 Promise Rejection - FULL ERROR');
-        console.error('Full Reason Object:', event.reason);
-        
-        // Deep inspect the error
-        if (event.reason) {
-            console.error('Reason Keys:', Object.keys(event.reason));
-            
-            if (event.reason.error) {
-                console.error('📋 error property:', event.reason.error);
-                console.error('📋 error keys:', Object.keys(event.reason.error));
-                console.error('📋 error JSON:', JSON.stringify(event.reason.error, null, 2));
-            }
-            if (event.reason.message) {
-                console.error('💬 message:', event.reason.message);
-            }
-            if (event.reason.data) {
-                console.error('📦 data:', event.reason.data);
-            }
-            if (event.reason.response) {
-                console.error('📨 response:', event.reason.response);
-            }
-            if (event.reason.status) {
-                console.error('🔢 status:', event.reason.status);
-            }
-            
-            // Try to stringify the entire thing
-            try {
-                console.error('🔍 FULL JSON:', JSON.stringify(event.reason, null, 2));
-            } catch(e) {
-                console.error('Could not stringify');
-            }
-        }
-        console.groupEnd();
-    });
-    
-    // Log page load
-    console.log('🚀 Debug logging initialized - watching Zoho SalesIQ requests');
-    </script>
-    
-    <script>window.$zoho=window.$zoho || {};$zoho.salesiq=$zoho.salesiq||{ready:function(){}}</script>
+     <script>window.$zoho=window.$zoho || {};$zoho.salesiq=$zoho.salesiq||{ready:function(){}}</script>
     <script id="zsiqscript" src="https://salesiq.zohopublic.com/widget?wc=siq8b224c61de3775c5e03699165e49a6040479a11d88222b17b6a003a21096b3e2" defer></script>
-
+    
     <script>
-    // Debug Zoho widget state
+    function log(msg) {
+        console.log(msg);
+        document.getElementById('status').innerHTML += msg + '<br>';
+    }
+    
+    // Wait for Zoho SalesIQ to be ready
     $zoho.salesiq.ready = function() {
-        console.log('✅ Zoho SalesIQ Ready');
-        console.log('📊 Widget State:', {
-            zoho: window.$zoho,
-            salesiq: window.$zoho.salesiq
+        log('✅ Zoho SalesIQ Ready');
+        
+        // AUTO-CLICK: Wait for widget to fully load, then click chat button
+        setTimeout(function() {
+            log('🔵 Auto-clicking chat button...');
+            
+            // Method 1: Use Zoho SalesIQ API to open chat
+            if ($zoho.salesiq.floatwindow) {
+                log('📌 Using floatwindow.visible(show)');
+                $zoho.salesiq.floatwindow.visible('show');
+            }
+            
+            // Method 2: Click the "Chat with us now" button after widget opens
+            setTimeout(function() {
+                // Try to find and click the "Chat with us now" button
+                const chatButton = document.querySelector('[data-zsqa="homepage_list_title"]');
+                if (chatButton) {
+                    log('📌 Found "Chat with us now" button, clicking...');
+                    chatButton.click();
+                } else {
+                    log('⚠️ Chat button not found in main document, trying iframe...');
+                    
+                    // Try finding it inside iframe
+                    const iframes = document.querySelectorAll('iframe');
+                    iframes.forEach(function(iframe, index) {
+                        try {
+                            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                            const iframeChatBtn = iframeDoc.querySelector('[data-zsqa="homepage_list_title"]');
+                            if (iframeChatBtn) {
+                                log('📌 Found button in iframe #' + index + ', clicking...');
+                                iframeChatBtn.click();
+                            }
+                        } catch(e) {
+                            // Cross-origin iframe, can't access
+                        }
+                    });
+                }
+            }, 1000);
+            
+            // Method 3: Send "hello" message after chat opens
+            setTimeout(function() {
+                log('📨 Attempting to send "hello" message...');
+                
+                // Use Zoho API to send message
+                if ($zoho.salesiq.visitor && $zoho.salesiq.visitor.question) {
+                    $zoho.salesiq.visitor.question('hello');
+                    log('✅ Message sent via visitor.question API');
+                } else {
+                    log('⚠️ visitor.question API not available');
+                    
+                    // Try chat API
+                    if ($zoho.salesiq.chat) {
+                        log('📌 Trying chat.start...');
+                        $zoho.salesiq.chat.start();
+                    }
+                }
+            }, 3000);
+            
+        }, 2000); // Wait 2 seconds for widget to fully render
+        
+        // Also add manual button handler as backup
+        document.getElementById('startChatBtn').addEventListener('click', function() {
+            log('🔵 Manual button clicked - Starting chat...');
+            if ($zoho.salesiq.floatwindow) {
+                $zoho.salesiq.floatwindow.visible('show');
+            }
         });
     };
     </script>
