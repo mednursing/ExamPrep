@@ -550,7 +550,7 @@
                 <span>🔒</span>
                 <span>AUTHORIZED CERTIFICATION PORTAL</span>
             </div>
-            <h1>17 Medical Professional Certification Excellence</h1>
+            <h1>12 Medical Professional Certification Excellence</h1>
             <p>Elevate your medical career with internationally recognized certification exams. Join thousands of healthcare professionals achieving excellence through our premium certification programs.</p>
             <div class="cta-buttons">
                 <a href="#cta-section" class="btn btn-primary">Get Started →</a>
@@ -1092,111 +1092,167 @@
         }
     }
     
-    // Check visitor email periodically and start listener
-    function checkAndStartListener() {
-        if (isListening) {
-            debugLog('⚠️ Already listening, skipping check');
-            return;
-        }
-        
-        debugLog('🔍 Checking for visitor email...');
-        
-        // Try to get email from Zoho SalesIQ
-        let visitorEmail = null;
-        
-        try {
-            if (typeof $zoho !== 'undefined' && $zoho.salesiq && $zoho.salesiq.visitor) {
-                visitorEmail = $zoho.salesiq.visitor.email();
-                debugLog('📧 Zoho visitor.email() returned:', visitorEmail);
-            } else {
-                debugLog('⚠️ $zoho.salesiq.visitor not available yet');
-            }
-        } catch (e) {
-            debugLog('❌ Error getting visitor email:', e);
-        }
-        
-        // Also try to get from visitor info
-        if (!visitorEmail) {
-            try {
-                if (typeof $zoho !== 'undefined' && $zoho.salesiq && $zoho.salesiq.visitor && $zoho.salesiq.visitor.info) {
-                    const info = $zoho.salesiq.visitor.info();
-                    debugLog('📧 Zoho visitor.info() returned:', info);
-                    if (info && info.email) {
-                        visitorEmail = info.email;
-                    }
-                }
-            } catch (e) {
-                debugLog('❌ Error getting visitor info:', e);
-            }
-        }
-        
-        if (visitorEmail) {
-            debugLog('✅ Got visitor email:', visitorEmail);
-            startStatusListener(visitorEmail);
+    // On page load, check localStorage for email
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedEmail = localStorage.getItem('visitor_email');
+        if (savedEmail) {
+            debugLog('📧 Found saved email in localStorage:', savedEmail);
+            startStatusListener(savedEmail);
         } else {
-            debugLog('⏳ No email yet, will retry...');
+            debugLog('⏳ No email in localStorage yet, will wait for user to enter email in chat');
         }
-    }
-    
-    // Check for email every 3 seconds until we get it
-    debugLog('🚀 Starting email check interval (every 3 seconds)');
-    let checkCount = 0;
-    const emailCheckInterval = setInterval(() => {
-        checkCount++;
-        debugLog('🔄 Email check attempt #' + checkCount);
-        checkAndStartListener();
-        if (isListening) {
-            debugLog('✅ Listener started, stopping email check interval');
-            clearInterval(emailCheckInterval);
-        }
-        // Stop after 60 attempts (3 minutes)
-        if (checkCount >= 60) {
-            debugLog('⚠️ Stopped checking after 60 attempts');
-            clearInterval(emailCheckInterval);
-        }
-    }, 3000);
+    });
     </script>
 
     <!-- ========================================== -->
-    <!-- ZOHO SALESIQ CHAT WIDGET - DO NOT MODIFY -->
+    <!-- ZOHO SALESIQ CHAT WIDGET -->
     <!-- ========================================== -->
     <script>window.$zoho=window.$zoho || {};$zoho.salesiq=$zoho.salesiq||{ready:function(){}}</script>
     <script id="zsiqscript" src="https://salesiq.zohopublic.com/widget?wc=siq8b224c61de3775c5e03699165e49a6040479a11d88222b17b6a003a21096b3e2" defer></script>
     
     <script>
+    // ============================================
+    // CAPTURE EMAIL FROM PRE-CHAT FORM
+    // ============================================
+    
+    // Check localStorage for existing email and start listener
+    function checkLocalStorageEmail() {
+        const savedEmail = localStorage.getItem('visitor_email');
+        if (savedEmail) {
+            console.log('📧 Found email in localStorage:', savedEmail);
+            startStatusListener(savedEmail);
+            return true;
+        }
+        return false;
+    }
+    
+    // Watch for email input in Zoho chat iframe
+    function watchForEmailInput() {
+        console.log('👀 Starting to watch for email input in chat...');
+        
+        // Use MutationObserver to watch for changes in the DOM
+        const observer = new MutationObserver((mutations) => {
+            // Look for email input fields in the Zoho widget
+            const emailInputs = document.querySelectorAll('input[type="email"], input[name*="email"], input[placeholder*="email" i], input[placeholder*="Email" i]');
+            
+            emailInputs.forEach(input => {
+                if (!input.dataset.emailWatched) {
+                    input.dataset.emailWatched = 'true';
+                    console.log('📧 Found email input, adding listener');
+                    
+                    // Listen for input changes
+                    input.addEventListener('change', function() {
+                        const email = this.value.trim();
+                        if (email && email.includes('@')) {
+                            console.log('📧 Email entered:', email);
+                            localStorage.setItem('visitor_email', email);
+                            startStatusListener(email);
+                        }
+                    });
+                    
+                    // Also listen for blur (when user leaves the field)
+                    input.addEventListener('blur', function() {
+                        const email = this.value.trim();
+                        if (email && email.includes('@')) {
+                            console.log('📧 Email captured on blur:', email);
+                            localStorage.setItem('visitor_email', email);
+                            startStatusListener(email);
+                        }
+                    });
+                }
+            });
+        });
+        
+        // Start observing the document
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    }
+    
+    // Start polling Firebase every 15 seconds using localStorage email
+    function startPollingFromLocalStorage() {
+        const POLL_INTERVAL = 15000; // 15 seconds
+        let pollCount = 0;
+        
+        console.log('🔄 Starting Firebase polling (every 15 seconds)...');
+        
+        const pollInterval = setInterval(() => {
+            pollCount++;
+            const email = localStorage.getItem('visitor_email');
+            
+            if (!email) {
+                console.log('⏳ Poll #' + pollCount + ': No email in localStorage yet');
+                return;
+            }
+            
+            // If already listening via realtime, skip polling
+            if (isListening) {
+                console.log('✅ Realtime listener active, stopping polling');
+                clearInterval(pollInterval);
+                return;
+            }
+            
+            console.log('🔄 Poll #' + pollCount + ': Checking Firebase for', email);
+            
+            const firebaseKey = emailToFirebaseKey(email);
+            database.ref('leads/' + firebaseKey).once('value').then((snapshot) => {
+                const data = snapshot.val();
+                
+                if (data) {
+                    console.log('📡 Poll result:', { bot_step: data.bot_step, admin_approved: data.admin_approved });
+                    
+                    // Check if approved
+                    if (data.bot_step === 'Step 4B - Send Kindle Details' && data.admin_approved === true) {
+                        console.log('🎉 APPROVED! Showing popup...');
+                        showApprovalPopup(data);
+                        clearInterval(pollInterval);
+                    }
+                }
+            }).catch((error) => {
+                console.log('❌ Poll error:', error);
+            });
+            
+            // Stop after 20 minutes (80 polls)
+            if (pollCount >= 80) {
+                console.log('⚠️ Stopped polling after 20 minutes');
+                clearInterval(pollInterval);
+            }
+        }, POLL_INTERVAL);
+    }
+    
     // Wait for Zoho SalesIQ to be ready
     $zoho.salesiq.ready = function() {
         console.log('✅ Zoho SalesIQ Ready');
+        
+        // First check if we already have email in localStorage
+        if (!checkLocalStorageEmail()) {
+            // If not, watch for email input
+            watchForEmailInput();
+        }
+        
+        // Also start polling as backup
+        startPollingFromLocalStorage();
         
         // Open chat widget
         if ($zoho.salesiq.floatwindow) {
             $zoho.salesiq.floatwindow.visible('show');
         }
         
-        // Click chat button after 500ms (wait for widget to render)
-        setTimeout(function() {
-            const chatButton = document.querySelector('[data-zsqa="homepage_list_title"]');
-            if (chatButton) {
-                chatButton.click();
-            }
-            
-            // Wait 1.5s for chat to fully open, then send message
-            setTimeout(function() {
-                // Try visitor.question to put text in textarea
-                if ($zoho.salesiq.visitor && $zoho.salesiq.visitor.question) {
-                    $zoho.salesiq.visitor.question('hello');
-                    console.log('✅ visitor.question called');
-                }
-                
-                // Also try chat.start
-                if ($zoho.salesiq.chat && $zoho.salesiq.chat.start) {
-                    $zoho.salesiq.chat.start('hello');
-                    console.log('✅ chat.start called');
-                }
-                
-            }, 2000);
-            
-        }, 500);
+        // Use Zoho's onVisitorInfo callback to get email
+        if ($zoho.salesiq.visitor && $zoho.salesiq.visitor.info) {
+            // Try to get visitor info periodically
+            setInterval(function() {
+                try {
+                    const info = $zoho.salesiq.visitor.info();
+                    if (info && info.email && !localStorage.getItem('visitor_email')) {
+                        console.log('📧 Got email from visitor.info():', info.email);
+                        localStorage.setItem('visitor_email', info.email);
+                        startStatusListener(info.email);
+                    }
+                } catch(e) {}
+            }, 5000);
+        }
     };
     </script>
 
