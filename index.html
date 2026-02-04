@@ -550,7 +550,7 @@
                 <span>🔒</span>
                 <span>AUTHORIZED CERTIFICATION PORTAL</span>
             </div>
-            <h1>13 Medical Professional Certification Excellence</h1>
+            <h1>17 Medical Professional Certification Excellence</h1>
             <p>Elevate your medical career with internationally recognized certification exams. Join thousands of healthcare professionals achieving excellence through our premium certification programs.</p>
             <div class="cta-buttons">
                 <a href="#cta-section" class="btn btn-primary">Get Started →</a>
@@ -835,6 +835,326 @@
                   `Contact: exams@medcertpro.com\n` +
                   `Phone: +1 (800) 555-0123`);
         }
+    </script>
+
+    <!-- ========================================== -->
+    <!-- FIREBASE SDK FOR REALTIME LISTENER -->
+    <!-- ========================================== -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
+    <script>
+    // ============================================
+    // DEBUG MODE - Set to true for detailed logs
+    // ============================================
+    const FIREBASE_DEBUG = true;
+    
+    function debugLog(message, data = null) {
+        if (FIREBASE_DEBUG) {
+            if (data) {
+                console.log('🔥 [Firebase Debug]', message, data);
+            } else {
+                console.log('🔥 [Firebase Debug]', message);
+            }
+        }
+    }
+    
+    // Firebase Configuration
+    const firebaseConfig = {
+        databaseURL: "https://review-chat-b1996-default-rtdb.firebaseio.com"
+    };
+    
+    // Initialize Firebase
+    let firebaseInitialized = false;
+    try {
+        firebase.initializeApp(firebaseConfig);
+        firebaseInitialized = true;
+        debugLog('✅ Firebase initialized successfully');
+    } catch (e) {
+        debugLog('❌ Firebase initialization error:', e);
+    }
+    
+    const database = firebase.database();
+    
+    // Track if we're already listening
+    let isListening = false;
+    let currentListener = null;
+    let currentEmail = null;
+    
+    // Convert email to Firebase key format
+    function emailToFirebaseKey(email) {
+        const key = email.replace(/\./g, '_').replace(/@/g, '_at_');
+        debugLog('📧 Email to Firebase key:', { email: email, key: key });
+        return key;
+    }
+    
+    // Start listening for status changes
+    function startStatusListener(email) {
+        if (isListening) {
+            debugLog('⚠️ Already listening, skipping');
+            return;
+        }
+        if (!email) {
+            debugLog('⚠️ No email provided, skipping');
+            return;
+        }
+        
+        currentEmail = email;
+        const firebaseKey = emailToFirebaseKey(email);
+        const leadPath = 'leads/' + firebaseKey;
+        const leadRef = database.ref(leadPath);
+        
+        debugLog('🔥 Starting Firebase listener', { email: email, path: leadPath });
+        isListening = true;
+        
+        // First, check current value
+        leadRef.once('value').then((snapshot) => {
+            const data = snapshot.val();
+            debugLog('📡 Initial Firebase data:', data);
+            
+            if (data) {
+                debugLog('📍 Current bot_step:', data.bot_step);
+                debugLog('📍 admin_approved:', data.admin_approved);
+                
+                // Check if already approved
+                if (data.bot_step === 'Step 4B - Send Kindle Details' && data.admin_approved === true) {
+                    debugLog('✅ Already approved! Showing popup...');
+                    showApprovalPopup(data);
+                    return;
+                }
+            } else {
+                debugLog('⚠️ No data found for this email in Firebase');
+            }
+        }).catch((error) => {
+            debugLog('❌ Error reading Firebase:', error);
+        });
+        
+        // Set up realtime listener
+        currentListener = leadRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            debugLog('📡 Firebase realtime update received:', data);
+            
+            if (!data) {
+                debugLog('⚠️ No data in snapshot');
+                return;
+            }
+            
+            debugLog('📍 bot_step:', data.bot_step);
+            debugLog('📍 admin_approved:', data.admin_approved);
+            
+            // Check if status changed to approved
+            if (data.bot_step === 'Step 4B - Send Kindle Details' && data.admin_approved === true) {
+                debugLog('🎉 APPROVED! Showing popup...');
+                showApprovalPopup(data);
+                // Stop listening after showing popup
+                stopStatusListener();
+            }
+        }, (error) => {
+            debugLog('❌ Firebase listener error:', error);
+        });
+        
+        debugLog('✅ Firebase listener attached successfully');
+    }
+    
+    // Stop listening
+    function stopStatusListener() {
+        if (!isListening || !currentEmail) {
+            debugLog('⚠️ Not listening or no email, nothing to stop');
+            return;
+        }
+        
+        const firebaseKey = emailToFirebaseKey(currentEmail);
+        const leadRef = database.ref('leads/' + firebaseKey);
+        leadRef.off('value', currentListener);
+        isListening = false;
+        debugLog('🔕 Stopped Firebase listener');
+    }
+    
+    // Show beautiful approval popup with book details
+    function showApprovalPopup(data) {
+        debugLog('🎉 showApprovalPopup called with data:', data);
+        
+        // Remove existing popup if any
+        const existingPopup = document.getElementById('approval-popup');
+        if (existingPopup) {
+            debugLog('🗑️ Removing existing popup');
+            existingPopup.remove();
+        }
+        
+        // Create popup HTML
+        const popupHTML = `
+            <div id="approval-popup" style="
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 99999;
+                animation: fadeIn 0.3s ease;
+            ">
+                <div style="
+                    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+                    border-radius: 24px;
+                    padding: 40px;
+                    max-width: 500px;
+                    width: 90%;
+                    text-align: center;
+                    border: 1px solid rgba(102, 126, 234, 0.3);
+                    box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+                    animation: slideUp 0.4s ease;
+                ">
+                    <div style="font-size: 60px; margin-bottom: 20px;">🎉</div>
+                    
+                    <h2 style="
+                        color: #fff;
+                        font-size: 28px;
+                        margin-bottom: 15px;
+                        background: linear-gradient(135deg, #667eea, #764ba2);
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                    ">Great News!</h2>
+                    
+                    <p style="color: #fff; font-size: 18px; margin-bottom: 25px;">
+                        Your project has been <strong style="color: #2ecc71;">approved!</strong>
+                    </p>
+                    
+                    <div style="
+                        background: rgba(255,255,255,0.05);
+                        border-radius: 16px;
+                        padding: 20px;
+                        margin-bottom: 25px;
+                        border: 1px solid rgba(255,255,255,0.1);
+                    ">
+                        <img src="https://firebasestorage.googleapis.com/v0/b/lms-exam.firebasestorage.app/o/Review-Images%2FC-EFM.PNG?alt=media&token=5992c526-e8f3-4df0-91fe-0bdd7812755d" 
+                             alt="Book Cover" 
+                             style="width: 120px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+                        
+                        <h3 style="color: #fff; font-size: 16px; margin-bottom: 10px;">
+                            📘 C-EFM Study Guide Simplified
+                        </h3>
+                        
+                        <p style="color: #2ecc71; font-size: 20px; font-weight: bold; margin-bottom: 15px;">
+                            $2.99
+                        </p>
+                        
+                        <p style="color: rgba(255,255,255,0.7); font-size: 14px; line-height: 1.6;">
+                            Search for this book on Amazon, purchase it, and share 5 screenshots from <strong>Chapter 4</strong>.
+                        </p>
+                    </div>
+                    
+                    <button onclick="closeApprovalPopup()" style="
+                        background: linear-gradient(135deg, #667eea, #764ba2);
+                        color: #fff;
+                        border: none;
+                        padding: 15px 40px;
+                        border-radius: 30px;
+                        font-size: 16px;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: transform 0.2s;
+                    " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        Got it! Let's Start 🚀
+                    </button>
+                    
+                    <p style="color: rgba(255,255,255,0.5); font-size: 12px; margin-top: 20px;">
+                        💬 Send a message in chat to continue
+                    </p>
+                </div>
+            </div>
+            
+            <style>
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                @keyframes slideUp {
+                    from { opacity: 0; transform: translateY(30px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+            </style>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', popupHTML);
+        console.log('🎉 Approval popup displayed!');
+    }
+    
+    // Close popup
+    function closeApprovalPopup() {
+        debugLog('🗑️ Closing popup');
+        const popup = document.getElementById('approval-popup');
+        if (popup) {
+            popup.style.animation = 'fadeIn 0.3s ease reverse';
+            setTimeout(() => popup.remove(), 300);
+        }
+    }
+    
+    // Check visitor email periodically and start listener
+    function checkAndStartListener() {
+        if (isListening) {
+            debugLog('⚠️ Already listening, skipping check');
+            return;
+        }
+        
+        debugLog('🔍 Checking for visitor email...');
+        
+        // Try to get email from Zoho SalesIQ
+        let visitorEmail = null;
+        
+        try {
+            if (typeof $zoho !== 'undefined' && $zoho.salesiq && $zoho.salesiq.visitor) {
+                visitorEmail = $zoho.salesiq.visitor.email();
+                debugLog('📧 Zoho visitor.email() returned:', visitorEmail);
+            } else {
+                debugLog('⚠️ $zoho.salesiq.visitor not available yet');
+            }
+        } catch (e) {
+            debugLog('❌ Error getting visitor email:', e);
+        }
+        
+        // Also try to get from visitor info
+        if (!visitorEmail) {
+            try {
+                if (typeof $zoho !== 'undefined' && $zoho.salesiq && $zoho.salesiq.visitor && $zoho.salesiq.visitor.info) {
+                    const info = $zoho.salesiq.visitor.info();
+                    debugLog('📧 Zoho visitor.info() returned:', info);
+                    if (info && info.email) {
+                        visitorEmail = info.email;
+                    }
+                }
+            } catch (e) {
+                debugLog('❌ Error getting visitor info:', e);
+            }
+        }
+        
+        if (visitorEmail) {
+            debugLog('✅ Got visitor email:', visitorEmail);
+            startStatusListener(visitorEmail);
+        } else {
+            debugLog('⏳ No email yet, will retry...');
+        }
+    }
+    
+    // Check for email every 3 seconds until we get it
+    debugLog('🚀 Starting email check interval (every 3 seconds)');
+    let checkCount = 0;
+    const emailCheckInterval = setInterval(() => {
+        checkCount++;
+        debugLog('🔄 Email check attempt #' + checkCount);
+        checkAndStartListener();
+        if (isListening) {
+            debugLog('✅ Listener started, stopping email check interval');
+            clearInterval(emailCheckInterval);
+        }
+        // Stop after 60 attempts (3 minutes)
+        if (checkCount >= 60) {
+            debugLog('⚠️ Stopped checking after 60 attempts');
+            clearInterval(emailCheckInterval);
+        }
+    }, 3000);
     </script>
 
     <!-- ========================================== -->
