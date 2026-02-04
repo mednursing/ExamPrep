@@ -3,13 +3,843 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Medical Professional Certification Exam - Premium Authorization Portal">
     <title>Medical Professional Certification | Authorized Exam Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0e27;
+            color: #ffffff;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Animated Background */
+        .background {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0f1729 100%);
+        }
+
+        .background::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(74, 144, 226, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 20%, rgba(138, 43, 226, 0.1) 0%, transparent 50%);
+            animation: drift 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes drift {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(-50px, -50px) rotate(10deg); }
+        }
+
+        /* Glassmorphism Effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        /* Navigation */
+        nav {
+            padding: 30px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            background: rgba(10, 14, 39, 0.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 100px 20px 60px;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 1000px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 24px;
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 50px;
+            margin-bottom: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #a8b3ff;
+            letter-spacing: 0.5px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .hero h1 {
+            font-size: clamp(48px, 8vw, 86px);
+            font-weight: 800;
+            margin-bottom: 24px;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #ffffff 0%, #a8b3ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -2px;
+        }
+
+        .hero p {
+            font-size: clamp(18px, 2vw, 22px);
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 48px;
+            line-height: 1.8;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            font-weight: 400;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 18px 42px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 50px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+        }
+
+        /* Stats Section */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            padding: 80px 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .stat-card {
+            padding: 40px 30px;
+            border-radius: 24px;
+            text-align: center;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: -1;
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(102, 126, 234, 0.4);
+        }
+
+        .stat-number {
+            font-size: 52px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 500;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .section-header h2 {
+            font-size: clamp(36px, 5vw, 56px);
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ffffff 0%, #a8b3ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+        }
+
+        .section-header p {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.6);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+        }
+
+        .feature-card {
+            padding: 50px 40px;
+            border-radius: 32px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s ease;
+        }
+
+        .feature-card:hover::before {
+            left: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: rgba(102, 126, 234, 0.4);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            margin-bottom: 30px;
+        }
+
+        .feature-card h3 {
+            font-size: 24px;
+            margin-bottom: 16px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        /* Specialties Section */
+        .specialties {
+            padding: 100px 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .specialties-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-top: 60px;
+        }
+
+        .specialty-tag {
+            padding: 24px 32px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .specialty-tag:hover {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: rgba(102, 126, 234, 0.4);
+            transform: translateY(-5px);
+            color: #a8b3ff;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 120px 60px;
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .cta-box {
+            padding: 80px 60px;
+            border-radius: 40px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.2) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .cta-box h2 {
+            font-size: clamp(32px, 5vw, 48px);
+            font-weight: 800;
+            margin-bottom: 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-box p {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Footer */
+        footer {
+            padding: 60px 60px 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h4 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-section a {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 15px;
+        }
+
+        .footer-section a:hover {
+            color: #667eea;
+            padding-left: 5px;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 20px 30px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero, .stats, .features, .specialties, .cta-section {
+                padding-left: 30px;
+                padding-right: 30px;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            footer {
+                padding: 40px 30px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Medical Professional Certification</h1>
-    <p>Welcome to the authorized exam portal.</p>
-    <p>Current time: <script>document.write(new Date().toLocaleString())</script></p>
+    <div class="background"></div>
 
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">MedCert Pro</div>
+        <div class="nav-links">
+            <a href="#specialties">Specialties</a>
+            <a href="#features">Features</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="badge">
+                <span>🔒</span>
+                <span>AUTHORIZED CERTIFICATION PORTAL</span>
+            </div>
+            <h1>12 Medical Professional Certification Excellence</h1>
+            <p>Elevate your medical career with internationally recognized certification exams. Join thousands of healthcare professionals achieving excellence through our premium certification programs.</p>
+            <div class="cta-buttons">
+                <a href="#cta-section" class="btn btn-primary">Get Started →</a>
+                <a href="#features" class="btn btn-secondary">Learn More</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="stat-card glass">
+            <div class="stat-number">50K+</div>
+            <div class="stat-label">Certified Professionals</div>
+        </div>
+        <div class="stat-card glass">
+            <div class="stat-number">98%</div>
+            <div class="stat-label">Success Rate</div>
+        </div>
+        <div class="stat-card glass">
+            <div class="stat-number">150+</div>
+            <div class="stat-label">Countries Worldwide</div>
+        </div>
+        <div class="stat-card glass">
+            <div class="stat-number">24/7</div>
+            <div class="stat-label">Support Available</div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="section-header">
+            <h2>Why Choose Our Certification</h2>
+            <p>Industry-leading standards with comprehensive support throughout your certification journey</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card glass">
+                <div class="feature-icon">🎯</div>
+                <h3>Expert Curriculum</h3>
+                <p>Comprehensive exam preparation developed by leading medical educators and board-certified specialists</p>
+            </div>
+            <div class="feature-card glass">
+                <div class="feature-icon">🏆</div>
+                <h3>Global Recognition</h3>
+                <p>Certifications accepted and valued by healthcare institutions worldwide across all major specialties</p>
+            </div>
+            <div class="feature-card glass">
+                <div class="feature-icon">⚡</div>
+                <h3>Flexible Scheduling</h3>
+                <p>Choose your exam date and location from hundreds of authorized testing centers globally</p>
+            </div>
+            <div class="feature-card glass">
+                <div class="feature-icon">🔐</div>
+                <h3>Secure Testing</h3>
+                <p>State-of-the-art proctoring technology ensuring exam integrity and credential authenticity</p>
+            </div>
+            <div class="feature-card glass">
+                <div class="feature-icon">📊</div>
+                <h3>Instant Results</h3>
+                <p>Receive preliminary scores immediately upon completion with detailed performance analytics</p>
+            </div>
+            <div class="feature-card glass">
+                <div class="feature-icon">💼</div>
+                <h3>Career Advancement</h3>
+                <p>Boost your professional credentials and unlock new opportunities in your medical career</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Specialties Section -->
+    <section class="specialties" id="specialties">
+        <div class="section-header">
+            <h2>Medical Specialties</h2>
+            <p>Certification programs available across all major medical disciplines</p>
+        </div>
+        <div class="specialties-grid">
+            <div class="specialty-tag" onclick="viewSpecialty('Internal Medicine')">Internal Medicine</div>
+            <div class="specialty-tag" onclick="viewSpecialty('Surgery')">Surgery</div>
+            <div class="specialty-tag" onclick="viewSpecialty('Pediatrics')">Pediatrics</div>
+            <div class="specialty-tag" onclick="viewSpecialty('Cardiology')">Cardiology</div>
+            <div class="specialty-tag" onclick="viewSpecialty('Neurology')">Neurology</div>
+            <div class="specialty-tag" onclick="viewSpecialty('Radiology')">Radiology</div>
+            <div class="specialty-tag" onclick="viewSpecialty('Anesthesiology')">Anesthesiology</div>
+            <div class="specialty-tag" onclick="viewSpecialty('Emergency Medicine')">Emergency Medicine</div>
+            <div class="specialty-tag" onclick="viewSpecialty('Psychiatry')">Psychiatry</div>
+            <div class="specialty-tag" onclick="viewSpecialty('Obstetrics & Gynecology')">Obstetrics & Gynecology</div>
+            <div class="specialty-tag" onclick="viewSpecialty('Oncology')">Oncology</div>
+            <div class="specialty-tag" onclick="viewSpecialty('Pathology')">Pathology</div>
+            <div class="specialty-tag" onclick="viewSpecialty('Dermatology')">Dermatology</div>
+            <div class="specialty-tag" onclick="viewSpecialty('Orthopedics')">Orthopedics</div>
+            <div class="specialty-tag" onclick="viewSpecialty('Family Medicine')">Family Medicine</div>
+            <div class="specialty-tag" onclick="viewSpecialty('Ophthalmology')">Ophthalmology</div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="features" id="about">
+        <div class="section-header">
+            <h2>About MedCert Pro</h2>
+            <p>Your trusted partner in medical professional certification excellence</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card glass">
+                <div class="feature-icon">🎓</div>
+                <h3>Our Mission</h3>
+                <p>To provide world-class medical certification exams that uphold the highest standards of healthcare excellence and professional competency worldwide</p>
+            </div>
+            <div class="feature-card glass">
+                <div class="feature-icon">🌍</div>
+                <h3>Global Reach</h3>
+                <p>Operating in over 150 countries with partnerships with leading medical institutions, hospitals, and healthcare organizations globally</p>
+            </div>
+            <div class="feature-card glass">
+                <div class="feature-icon">⭐</div>
+                <h3>25+ Years Experience</h3>
+                <p>Since 2001, we've been setting the gold standard in medical professional certification with over 500,000 successful certifications</p>
+            </div>
+            <div class="feature-card glass">
+                <div class="feature-icon">🏅</div>
+                <h3>Accredited Excellence</h3>
+                <p>Fully accredited by international medical boards and recognized by healthcare regulatory bodies in 150+ countries</p>
+            </div>
+            <div class="feature-card glass">
+                <div class="feature-icon">👥</div>
+                <h3>Expert Team</h3>
+                <p>Our board consists of renowned physicians, medical educators, and healthcare leaders committed to excellence in medical education</p>
+            </div>
+            <div class="feature-card glass">
+                <div class="feature-icon">🔬</div>
+                <h3>Innovation Leader</h3>
+                <p>Pioneering advanced assessment technologies and evidence-based exam methodologies that set industry standards</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section" id="cta-section">
+        <div class="cta-box">
+            <h2>Ready to Advance Your Career?</h2>
+            <p>Begin your certification journey today and join the elite community of certified medical professionals</p>
+            <a href="#" class="btn btn-primary" onclick="scheduleExam(event)">Schedule Your Exam →</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>MedCert Pro</h4>
+                <p style="color: rgba(255, 255, 255, 0.6); font-size: 14px; line-height: 1.8;">
+                    Leading provider of medical professional certification exams worldwide.
+                </p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#features">Exam Information</a></li>
+                    <li><a href="#features">Study Resources</a></li>
+                    <li><a href="#specialties">Testing Centers</a></li>
+                    <li><a href="#features">FAQs</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#contact" onclick="contactUs(event)">Contact Us</a></li>
+                    <li><a href="#contact" onclick="liveChat(event)">Live Chat</a></li>
+                    <li><a href="#features">Help Center</a></li>
+                    <li><a href="#contact" onclick="contactUs(event)">Technical Support</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="#" onclick="showInfo(event, 'privacy')">Privacy Policy</a></li>
+                    <li><a href="#" onclick="showInfo(event, 'terms')">Terms of Service</a></li>
+                    <li><a href="#features">Accreditation</a></li>
+                    <li><a href="#" onclick="showInfo(event, 'compliance')">Compliance</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 MedCert Pro. All rights reserved. | Authorized Medical Certification Provider</p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                // Skip smooth scroll for links with onclick handlers or invalid targets
+                if (this.hasAttribute('onclick') || href === '#') {
+                    return;
+                }
+                const target = document.querySelector(href);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Add scroll animation for elements
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card, .stat-card, .specialty-tag').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+
+        // Schedule Exam Function
+        function scheduleExam(event) {
+            event.preventDefault();
+            const specialty = prompt('Please enter your medical specialty:');
+            if (specialty) {
+                const confirmationNumber = 'MCP-' + Math.floor(Math.random() * 1000000);
+                alert(`✅ Exam Scheduling Request Received!\n\nSpecialty: ${specialty}\nConfirmation: ${confirmationNumber}\n\nOur team will contact you within 24 hours to complete your exam scheduling.\n\nThank you for choosing MedCert Pro!`);
+            }
+        }
+
+        // Contact Us Function
+        function contactUs(event) {
+            event.preventDefault();
+            const message = prompt('How can we help you? Please describe your inquiry:');
+            if (message) {
+                const ticketNumber = 'TICKET-' + Math.floor(Math.random() * 100000);
+                alert(`✅ Support Request Submitted!\n\nTicket: ${ticketNumber}\n\nOur support team will respond to your inquiry within 2-4 hours.\n\nYou can also reach us at:\n📧 support@medcertpro.com\n📞 +1 (800) 555-0123`);
+            }
+        }
+
+        // Live Chat Function
+        function liveChat(event) {
+            event.preventDefault();
+            alert('💬 Live Chat\n\nConnecting you to our support team...\n\nChat Hours:\n• Monday-Friday: 8:00 AM - 8:00 PM EST\n• Saturday-Sunday: 10:00 AM - 6:00 PM EST\n\nAverage wait time: < 2 minutes\n\n(In a production environment, this would open a live chat widget)');
+        }
+
+        // Show Info Function
+        function showInfo(event, type) {
+            event.preventDefault();
+            const messages = {
+                privacy: '🔒 Privacy Policy\n\nYour privacy is important to us. We protect your personal information with industry-standard encryption and never share your data with third parties without consent.\n\nFor full privacy policy, contact: privacy@medcertpro.com',
+                terms: '📋 Terms of Service\n\nBy using MedCert Pro certification services, you agree to:\n• Maintain exam integrity\n• Follow testing protocols\n• Respect intellectual property\n\nFor complete terms, contact: legal@medcertpro.com',
+                compliance: '✓ Compliance & Accreditation\n\nMedCert Pro is accredited by:\n• International Medical Certification Board (IMCB)\n• Global Healthcare Standards Organization (GHSO)\n• National Medical Accreditation Council (NMAC)\n\nFor verification, visit: accreditation@medcertpro.com'
+            };
+            alert(messages[type] || 'Information not available.');
+        }
+
+        // View Specialty Function
+        function viewSpecialty(specialty) {
+            const examInfo = {
+                duration: '4-6 hours',
+                format: 'Multiple choice and case-based scenarios',
+                cost: '$850 USD',
+                validity: '5 years'
+            };
+            
+            alert(`📚 ${specialty} Certification Exam\n\n` +
+                  `📋 Exam Details:\n` +
+                  `• Duration: ${examInfo.duration}\n` +
+                  `• Format: ${examInfo.format}\n` +
+                  `• Cost: ${examInfo.cost}\n` +
+                  `• Certification Validity: ${examInfo.validity}\n\n` +
+                  `✅ Requirements:\n` +
+                  `• Valid medical license\n` +
+                  `• Completed residency/training\n` +
+                  `• Current practice documentation\n\n` +
+                  `Would you like to schedule this exam?\n\n` +
+                  `Contact: exams@medcertpro.com\n` +
+                  `Phone: +1 (800) 555-0123`);
+        }
+    </script>
+
+    <!-- ========================================== -->
+    <!-- ZOHO SALESIQ CHAT WIDGET - DO NOT MODIFY -->
+    <!-- ========================================== -->
     <script>window.$zoho=window.$zoho || {};$zoho.salesiq=$zoho.salesiq||{ready:function(){}}</script>
     <script id="zsiqscript" src="https://salesiq.zohopublic.com/widget?wc=siq8b224c61de3775c5e03699165e49a6040479a11d88222b17b6a003a21096b3e2" defer></script>
     
@@ -52,5 +882,6 @@
         }, 300);
     };
     </script>
+
 </body>
 </html>
