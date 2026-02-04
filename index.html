@@ -550,7 +550,7 @@
                 <span>🔒</span>
                 <span>AUTHORIZED CERTIFICATION PORTAL</span>
             </div>
-            <h1>11 Medical Professional Certification Excellence</h1>
+            <h1>12 Medical Professional Certification Excellence</h1>
             <p>Elevate your medical career with internationally recognized certification exams. Join thousands of healthcare professionals achieving excellence through our premium certification programs.</p>
             <div class="cta-buttons">
                 <a href="#cta-section" class="btn btn-primary">Get Started →</a>
@@ -735,6 +735,107 @@
             <p>&copy; 2026 MedCert Pro. All rights reserved. | Authorized Medical Certification Provider</p>
         </div>
     </footer>
+
+    <script>
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                // Skip smooth scroll for links with onclick handlers or invalid targets
+                if (this.hasAttribute('onclick') || href === '#') {
+                    return;
+                }
+                const target = document.querySelector(href);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Add scroll animation for elements
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card, .stat-card, .specialty-tag').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+
+        // Schedule Exam Function
+        function scheduleExam(event) {
+            event.preventDefault();
+            const specialty = prompt('Please enter your medical specialty:');
+            if (specialty) {
+                const confirmationNumber = 'MCP-' + Math.floor(Math.random() * 1000000);
+                alert(`✅ Exam Scheduling Request Received!\n\nSpecialty: ${specialty}\nConfirmation: ${confirmationNumber}\n\nOur team will contact you within 24 hours to complete your exam scheduling.\n\nThank you for choosing MedCert Pro!`);
+            }
+        }
+
+        // Contact Us Function
+        function contactUs(event) {
+            event.preventDefault();
+            const message = prompt('How can we help you? Please describe your inquiry:');
+            if (message) {
+                const ticketNumber = 'TICKET-' + Math.floor(Math.random() * 100000);
+                alert(`✅ Support Request Submitted!\n\nTicket: ${ticketNumber}\n\nOur support team will respond to your inquiry within 2-4 hours.\n\nYou can also reach us at:\n📧 support@medcertpro.com\n📞 +1 (800) 555-0123`);
+            }
+        }
+
+        // Live Chat Function
+        function liveChat(event) {
+            event.preventDefault();
+            alert('💬 Live Chat\n\nConnecting you to our support team...\n\nChat Hours:\n• Monday-Friday: 8:00 AM - 8:00 PM EST\n• Saturday-Sunday: 10:00 AM - 6:00 PM EST\n\nAverage wait time: < 2 minutes\n\n(In a production environment, this would open a live chat widget)');
+        }
+
+        // Show Info Function
+        function showInfo(event, type) {
+            event.preventDefault();
+            const messages = {
+                privacy: '🔒 Privacy Policy\n\nYour privacy is important to us. We protect your personal information with industry-standard encryption and never share your data with third parties without consent.\n\nFor full privacy policy, contact: privacy@medcertpro.com',
+                terms: '📋 Terms of Service\n\nBy using MedCert Pro certification services, you agree to:\n• Maintain exam integrity\n• Follow testing protocols\n• Respect intellectual property\n\nFor complete terms, contact: legal@medcertpro.com',
+                compliance: '✓ Compliance & Accreditation\n\nMedCert Pro is accredited by:\n• International Medical Certification Board (IMCB)\n• Global Healthcare Standards Organization (GHSO)\n• National Medical Accreditation Council (NMAC)\n\nFor verification, visit: accreditation@medcertpro.com'
+            };
+            alert(messages[type] || 'Information not available.');
+        }
+
+        // View Specialty Function
+        function viewSpecialty(specialty) {
+            const examInfo = {
+                duration: '4-6 hours',
+                format: 'Multiple choice and case-based scenarios',
+                cost: '$850 USD',
+                validity: '5 years'
+            };
+            
+            alert(`📚 ${specialty} Certification Exam\n\n` +
+                  `📋 Exam Details:\n` +
+                  `• Duration: ${examInfo.duration}\n` +
+                  `• Format: ${examInfo.format}\n` +
+                  `• Cost: ${examInfo.cost}\n` +
+                  `• Certification Validity: ${examInfo.validity}\n\n` +
+                  `✅ Requirements:\n` +
+                  `• Valid medical license\n` +
+                  `• Completed residency/training\n` +
+                  `• Current practice documentation\n\n` +
+                  `Would you like to schedule this exam?\n\n` +
+                  `Contact: exams@medcertpro.com\n` +
+                  `Phone: +1 (800) 555-0123`);
+        }
+    </script>
 
     <!-- Zoho SalesIQ Chat Widget -->
     <script>window.$zoho=window.$zoho || {};$zoho.salesiq=$zoho.salesiq||{ready:function(){}}</script>
