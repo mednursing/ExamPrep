@@ -550,7 +550,7 @@
                 <span>🔒</span>
                 <span>AUTHORIZED CERTIFICATION PORTAL</span>
             </div>
-            <h1>40 Medical Professional Certification Excellence</h1>
+            <h1>41 Medical Professional Certification Excellence</h1>
             <p>Elevate your medical career with internationally recognized certification exams. Join thousands of healthcare professionals achieving excellence through our premium certification programs.</p>
             <div class="cta-buttons">
                 <a href="#cta-section" class="btn btn-primary">Get Started →</a>
@@ -1118,41 +1118,19 @@
         return sessionId;
     }
     
-    // Send message to chat - uses floatwindow.open + visitor.question
+    // Send message to chat - just sets the question, doesn't try to open
     function sendAutoMessage(message) {
-        console.log('💬 Auto-sending message to chat:', message);
+        console.log('💬 Setting question in chat:', message);
         
-        // First open the chat window
+        // Just set the question - don't try to open or trigger chat
         try {
-            if ($zoho.salesiq.floatwindow && $zoho.salesiq.floatwindow.open) {
-                $zoho.salesiq.floatwindow.open();
-                console.log('✅ floatwindow.open() called');
+            if ($zoho.salesiq.visitor && $zoho.salesiq.visitor.question) {
+                $zoho.salesiq.visitor.question(message);
+                console.log('✅ visitor.question() called with:', message);
             }
         } catch (e) {
-            console.log('❌ floatwindow.open error:', e);
+            console.log('❌ visitor.question error:', e);
         }
-        
-        // Also try floatbutton.click as backup
-        try {
-            if ($zoho.salesiq.floatbutton && $zoho.salesiq.floatbutton.click) {
-                $zoho.salesiq.floatbutton.click();
-                console.log('✅ floatbutton.click() called');
-            }
-        } catch (e) {
-            console.log('❌ floatbutton.click error:', e);
-        }
-        
-        // Set the question after delay
-        setTimeout(function() {
-            try {
-                if ($zoho.salesiq.visitor && $zoho.salesiq.visitor.question) {
-                    $zoho.salesiq.visitor.question(message);
-                    console.log('✅ visitor.question() called with:', message);
-                }
-            } catch (e) {
-                console.log('❌ visitor.question error:', e);
-            }
-        }, 1000);
     }
     
     // Start polling Firebase for this session ID
@@ -1227,72 +1205,45 @@
         // Start polling Firebase for this session
         startSessionPolling(sessionId);
         
-        // Step 1: Show and open float window (wait 1 second for widget to load)
-        setTimeout(function() {
-            console.log('📌 Step 1: Showing chat widget...');
-            
-            try {
-                if ($zoho.salesiq.floatwindow && $zoho.salesiq.floatwindow.visible) {
-                    $zoho.salesiq.floatwindow.visible('show');
-                    console.log('✅ floatwindow.visible("show") called');
-                }
-            } catch(e) {
-                console.log('❌ floatwindow.visible error:', e);
+        // MINIMAL APPROACH: Just set visitor info, don't try to open/trigger anything
+        // This avoids interfering with Zoho's internal flow
+        
+        // Set the session ID as visitor info (this doesn't trigger any chat)
+        try {
+            if ($zoho.salesiq.visitor && $zoho.salesiq.visitor.info) {
+                $zoho.salesiq.visitor.info({
+                    'Session ID': sessionId
+                });
+                console.log('✅ Set visitor info with session ID:', sessionId);
             }
-            
-            try {
-                if ($zoho.salesiq.floatbutton && $zoho.salesiq.floatbutton.visible) {
-                    $zoho.salesiq.floatbutton.visible('show');
-                    console.log('✅ floatbutton.visible("show") called');
-                }
-            } catch(e) {
-                console.log('❌ floatbutton.visible error:', e);
+        } catch(e) {
+            console.log('❌ visitor.info error:', e);
+        }
+        
+        // Pre-fill the question (this sets what appears in the input when chat opens)
+        try {
+            if ($zoho.salesiq.visitor && $zoho.salesiq.visitor.question) {
+                const helloMessage = 'hello SID:' + sessionId;
+                $zoho.salesiq.visitor.question(helloMessage);
+                console.log('✅ Pre-filled question:', helloMessage);
             }
-            
-            // Step 2: Open the chat window (after 1 second)
-            setTimeout(function() {
-                console.log('📌 Step 2: Opening chat window...');
-                
-                // Try floatwindow.open() - this opens the chat window
-                try {
-                    if ($zoho.salesiq.floatwindow && $zoho.salesiq.floatwindow.open) {
-                        $zoho.salesiq.floatwindow.open();
-                        console.log('✅ floatwindow.open() called');
-                    }
-                } catch(e) {
-                    console.log('❌ floatwindow.open error:', e);
-                }
-                
-                // Also try floatbutton.click as backup
-                try {
-                    if ($zoho.salesiq.floatbutton && $zoho.salesiq.floatbutton.click) {
-                        $zoho.salesiq.floatbutton.click();
-                        console.log('✅ floatbutton.click() called');
-                    }
-                } catch(e) {
-                    console.log('❌ floatbutton.click error:', e);
-                }
-                
-                // Step 3: Send hello message with session ID (after 2 seconds)
-                setTimeout(function() {
-                    const helloMessage = 'hello SID:' + sessionId;
-                    console.log('📌 Step 3: Setting question:', helloMessage);
-                    
-                    // Use visitor.question to set the message
-                    try {
-                        if ($zoho.salesiq.visitor && $zoho.salesiq.visitor.question) {
-                            $zoho.salesiq.visitor.question(helloMessage);
-                            console.log('✅ visitor.question() called');
-                        }
-                    } catch(e) {
-                        console.log('❌ visitor.question error:', e);
-                    }
-                    
-                }, 2000); // Wait 2 seconds after opening
-                
-            }, 1000); // Wait 1 second after showing
-            
-        }, 1000); // Wait 1 second after ready
+        } catch(e) {
+            console.log('❌ visitor.question error:', e);
+        }
+        
+        // Listen for when chat actually starts (user opens it)
+        try {
+            if ($zoho.salesiq.chat && $zoho.salesiq.chat.waitingHandler) {
+                $zoho.salesiq.chat.waitingHandler(function() {
+                    console.log('💬 Chat waiting - user opened chat window');
+                });
+            }
+        } catch(e) {
+            console.log('❌ chat.waitingHandler error:', e);
+        }
+        
+        console.log('📌 Zoho ready. Session ID:', sessionId);
+        console.log('📌 User needs to click chat button to start conversation.');
     };
     </script>
 
