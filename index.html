@@ -6,7 +6,7 @@
     <title>Medical Professional Certification | Authorized Exam Portal</title>
 </head>
 <body>
-    <h1>1 Medical Professional Certification</h1>
+    <h1>Medical Professional Certification</h1>
     <p>Welcome to the authorized exam portal.</p>
     <p>Current time: <script>document.write(new Date().toLocaleString())</script></p>
 
@@ -53,10 +53,39 @@
             // Send "hello" message after chat opens
             setTimeout(function() {
                 console.log('📨 Attempting to send "hello" message...');
+                
+                // Try API first
                 if ($zoho.salesiq.visitor && $zoho.salesiq.visitor.question) {
                     $zoho.salesiq.visitor.question('hello');
                     console.log('✅ Message sent via visitor.question API');
                 }
+                
+                // Also try direct textarea input
+                setTimeout(function() {
+                    // Find textarea in iframes
+                    const iframes = document.querySelectorAll('iframe');
+                    iframes.forEach(function(iframe) {
+                        try {
+                            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                            const textarea = iframeDoc.querySelector('[data-zsqa="text_area"]');
+                            const sendBtn = iframeDoc.querySelector('[data-zsqa="message_send_btn"]');
+                            
+                            if (textarea && sendBtn) {
+                                console.log('📝 Found textarea, typing hello...');
+                                textarea.value = 'hello';
+                                textarea.dispatchEvent(new Event('input', { bubbles: true }));
+                                
+                                setTimeout(function() {
+                                    console.log('📤 Clicking send button...');
+                                    sendBtn.click();
+                                    console.log('✅ Hello message sent!');
+                                }, 500);
+                            }
+                        } catch(e) {
+                            console.log('⚠️ Cannot access iframe:', e.message);
+                        }
+                    });
+                }, 1000);
             }, 3000);
             
         }, 2000);
