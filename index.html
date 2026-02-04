@@ -1061,7 +1061,7 @@
                     </button>
                     
                     <p style="color: rgba(255,255,255,0.5); font-size: 12px; margin-top: 20px;">
-                        💬 Send a message in chat to continue
+                        Chat will refresh automatically
                     </p>
                 </div>
             </div>
@@ -1082,9 +1082,9 @@
         console.log('🎉 Approval popup displayed!');
     }
     
-    // Close popup
+    // Close popup and refresh chat
     function closeApprovalPopup() {
-        debugLog('🗑️ Closing popup');
+        debugLog('🗑️ Closing popup and refreshing chat');
         const popup = document.getElementById('approval-popup');
         if (popup) {
             popup.style.animation = 'fadeIn 0.3s ease reverse';
@@ -1116,6 +1116,26 @@
             console.log('🆔 Found existing session ID:', sessionId);
         }
         return sessionId;
+    }
+    
+    // Auto-send message to chat to trigger bot response
+    function sendAutoMessage(message) {
+        console.log('💬 Auto-sending message to chat:', message);
+        try {
+            // Try chat.send first
+            if ($zoho.salesiq.chat && $zoho.salesiq.chat.send) {
+                $zoho.salesiq.chat.send(message);
+                console.log('✅ chat.send() called');
+                return;
+            }
+            // Try visitor.question
+            if ($zoho.salesiq.visitor && $zoho.salesiq.visitor.question) {
+                $zoho.salesiq.visitor.question(message);
+                console.log('✅ visitor.question() called');
+            }
+        } catch (e) {
+            console.log('❌ Error sending auto message:', e);
+        }
     }
     
     // Start polling Firebase for this session ID
@@ -1153,9 +1173,15 @@
                         
                         // Check if approved
                         if (lead.bot_step === 'Step 4B - Send Kindle Details' && lead.admin_approved === true) {
-                            console.log('🎉 APPROVED! Showing popup...');
+                            console.log('🎉 APPROVED! Showing popup and auto-sending message...');
                             approvalShown = true;
                             showApprovalPopup(lead);
+                            
+                            // Auto-send message to chat to trigger updated status in chat
+                            setTimeout(function() {
+                                sendAutoMessage('Check status');
+                            }, 1000);
+                            
                             clearInterval(pollInterval);
                         }
                     } else {
