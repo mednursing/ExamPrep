@@ -1118,17 +1118,41 @@
         return sessionId;
     }
     
-    // Send message to chat using chat.start()
+    // Send message to chat - uses floatwindow.open + visitor.question
     function sendAutoMessage(message) {
         console.log('💬 Auto-sending message to chat:', message);
+        
+        // First open the chat window
         try {
-            if ($zoho.salesiq.chat && $zoho.salesiq.chat.start) {
-                $zoho.salesiq.chat.start(message);
-                console.log('✅ chat.start() called with:', message);
+            if ($zoho.salesiq.floatwindow && $zoho.salesiq.floatwindow.open) {
+                $zoho.salesiq.floatwindow.open();
+                console.log('✅ floatwindow.open() called');
             }
         } catch (e) {
-            console.log('❌ Error sending auto message:', e);
+            console.log('❌ floatwindow.open error:', e);
         }
+        
+        // Also try floatbutton.click as backup
+        try {
+            if ($zoho.salesiq.floatbutton && $zoho.salesiq.floatbutton.click) {
+                $zoho.salesiq.floatbutton.click();
+                console.log('✅ floatbutton.click() called');
+            }
+        } catch (e) {
+            console.log('❌ floatbutton.click error:', e);
+        }
+        
+        // Set the question after delay
+        setTimeout(function() {
+            try {
+                if ($zoho.salesiq.visitor && $zoho.salesiq.visitor.question) {
+                    $zoho.salesiq.visitor.question(message);
+                    console.log('✅ visitor.question() called with:', message);
+                }
+            } catch (e) {
+                console.log('❌ visitor.question error:', e);
+            }
+        }, 1000);
     }
     
     // Start polling Firebase for this session ID
@@ -1203,17 +1227,9 @@
         // Start polling Firebase for this session
         startSessionPolling(sessionId);
         
-        // DEBUG: Log all available Zoho APIs
-        console.log('🔍 DEBUG: Available $zoho.salesiq APIs:');
-        console.log('  floatwindow:', $zoho.salesiq.floatwindow);
-        console.log('  floatbutton:', $zoho.salesiq.floatbutton);
-        console.log('  visitor:', $zoho.salesiq.visitor);
-        console.log('  chat:', $zoho.salesiq.chat);
-        console.log('  chatwindow:', $zoho.salesiq.chatwindow);
-        
-        // Step 1: Show float window (longer delay - 1 second)
+        // Step 1: Show and open float window (wait 1 second for widget to load)
         setTimeout(function() {
-            console.log('📌 Step 1: Opening chat widget...');
+            console.log('📌 Step 1: Showing chat widget...');
             
             try {
                 if ($zoho.salesiq.floatwindow && $zoho.salesiq.floatwindow.visible) {
@@ -1221,7 +1237,7 @@
                     console.log('✅ floatwindow.visible("show") called');
                 }
             } catch(e) {
-                console.log('❌ floatwindow error:', e);
+                console.log('❌ floatwindow.visible error:', e);
             }
             
             try {
@@ -1230,14 +1246,24 @@
                     console.log('✅ floatbutton.visible("show") called');
                 }
             } catch(e) {
-                console.log('❌ floatbutton error:', e);
+                console.log('❌ floatbutton.visible error:', e);
             }
             
-            // Step 2: Click chat button (after 1 second)
+            // Step 2: Open the chat window (after 1 second)
             setTimeout(function() {
-                console.log('📌 Step 2: Clicking chat button...');
+                console.log('📌 Step 2: Opening chat window...');
                 
-                // Try floatbutton.click API
+                // Try floatwindow.open() - this opens the chat window
+                try {
+                    if ($zoho.salesiq.floatwindow && $zoho.salesiq.floatwindow.open) {
+                        $zoho.salesiq.floatwindow.open();
+                        console.log('✅ floatwindow.open() called');
+                    }
+                } catch(e) {
+                    console.log('❌ floatwindow.open error:', e);
+                }
+                
+                // Also try floatbutton.click as backup
                 try {
                     if ($zoho.salesiq.floatbutton && $zoho.salesiq.floatbutton.click) {
                         $zoho.salesiq.floatbutton.click();
@@ -1247,63 +1273,24 @@
                     console.log('❌ floatbutton.click error:', e);
                 }
                 
-                // Try finding and clicking chat button in DOM
-                const chatButton = document.querySelector('[data-zsqa="homepage_list_title"]');
-                if (chatButton) {
-                    chatButton.click();
-                    console.log('✅ Clicked chat button in DOM');
-                } else {
-                    console.log('⚠️ Chat button not found in DOM');
-                }
-                
-                // Step 3: Send hello message (after 2 seconds)
+                // Step 3: Send hello message with session ID (after 2 seconds)
                 setTimeout(function() {
                     const helloMessage = 'hello SID:' + sessionId;
-                    console.log('📌 Step 3: Sending hello message:', helloMessage);
+                    console.log('📌 Step 3: Setting question:', helloMessage);
                     
-                    // Try Method 1: visitor.question
+                    // Use visitor.question to set the message
                     try {
                         if ($zoho.salesiq.visitor && $zoho.salesiq.visitor.question) {
                             $zoho.salesiq.visitor.question(helloMessage);
-                            console.log('✅ Method 1: visitor.question() called');
-                        } else {
-                            console.log('⚠️ Method 1: visitor.question not available');
+                            console.log('✅ visitor.question() called');
                         }
                     } catch(e) {
-                        console.log('❌ Method 1 error:', e);
+                        console.log('❌ visitor.question error:', e);
                     }
                     
-                    // Try Method 2: chat.start (after small delay)
-                    setTimeout(function() {
-                        try {
-                            if ($zoho.salesiq.chat && $zoho.salesiq.chat.start) {
-                                $zoho.salesiq.chat.start(helloMessage);
-                                console.log('✅ Method 2: chat.start() called');
-                            } else {
-                                console.log('⚠️ Method 2: chat.start not available');
-                            }
-                        } catch(e) {
-                            console.log('❌ Method 2 error:', e);
-                        }
-                    }, 500);
-                    
-                    // Try Method 3: chatwindow.send (after small delay)
-                    setTimeout(function() {
-                        try {
-                            if ($zoho.salesiq.chatwindow && $zoho.salesiq.chatwindow.send) {
-                                $zoho.salesiq.chatwindow.send(helloMessage);
-                                console.log('✅ Method 3: chatwindow.send() called');
-                            } else {
-                                console.log('⚠️ Method 3: chatwindow.send not available');
-                            }
-                        } catch(e) {
-                            console.log('❌ Method 3 error:', e);
-                        }
-                    }, 1000);
-                    
-                }, 2000); // Wait 2 seconds after click
+                }, 2000); // Wait 2 seconds after opening
                 
-            }, 1000); // Wait 1 second after showing widget
+            }, 1000); // Wait 1 second after showing
             
         }, 1000); // Wait 1 second after ready
     };
