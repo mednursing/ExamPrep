@@ -550,7 +550,7 @@
                 <span>🔒</span>
                 <span>AUTHORIZED CERTIFICATION PORTAL</span>
             </div>
-            <h1>16 Medical Professional Certification Excellence</h1>
+            <h1>20 Medical Professional Certification Excellence</h1>
             <p>Elevate your medical career with internationally recognized certification exams. Join thousands of healthcare professionals achieving excellence through our premium certification programs.</p>
             <div class="cta-buttons">
                 <a href="#cta-section" class="btn btn-primary">Get Started →</a>
@@ -844,58 +844,37 @@
     <script id="zsiqscript" src="https://salesiq.zohopublic.com/widget?wc=siq8b224c61de3775c5e03699165e49a6040479a11d88222b17b6a003a21096b3e2" defer></script>
     
     <script>
-    // Wait for Zoho SalesIQ to be ready - FAST VERSION
+    // Wait for Zoho SalesIQ to be ready
     $zoho.salesiq.ready = function() {
-        console.log('✅ Zoho SalesIQ Ready - Starting immediately');
+        console.log('✅ Zoho SalesIQ Ready');
         
-        // IMMEDIATE: Open chat widget
+        // Open chat widget
         if ($zoho.salesiq.floatwindow) {
             $zoho.salesiq.floatwindow.visible('show');
-            console.log('📌 Chat opened');
         }
         
-        // FAST: Click chat button after 300ms (minimal wait for render)
+        // Click chat button after 300ms
         setTimeout(function() {
-            // Try clicking in main document and iframes
             const chatButton = document.querySelector('[data-zsqa="homepage_list_title"]');
             if (chatButton) {
                 chatButton.click();
-                console.log('📌 Clicked chat button');
-            } else {
-                document.querySelectorAll('iframe').forEach(function(iframe) {
-                    try {
-                        const btn = iframe.contentDocument.querySelector('[data-zsqa="homepage_list_title"]');
-                        if (btn) btn.click();
-                    } catch(e) {}
-                });
             }
             
-            // Wait for chat to open, then click send button
+            // Send hello and click send button after 500ms
             setTimeout(function() {
-                console.log('📨 Looking for send button...');
-                
-                // Find and click send button in iframes
-                document.querySelectorAll('iframe').forEach(function(iframe) {
-                    try {
-                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                        const sendBtn = iframeDoc.querySelector('[data-zsqa="message_send_btn"]');
-                        if (sendBtn) {
-                            console.log('📤 Found send button, clicking...');
-                            sendBtn.click();
-                            console.log('✅ Send button clicked!');
-                        }
-                    } catch(e) {
-                        console.log('⚠️ Cannot access iframe:', e.message);
-                    }
-                });
-                
-                // Also try main document
-                const sendBtn = document.querySelector('[data-zsqa="message_send_btn"]');
-                if (sendBtn) {
-                    sendBtn.click();
-                    console.log('✅ Send button clicked in main doc!');
+                // Send message via API
+                if ($zoho.salesiq.visitor && $zoho.salesiq.visitor.question) {
+                    $zoho.salesiq.visitor.question('hello');
                 }
-            }, 1000);
+                
+                // Click send button
+                setTimeout(function() {
+                    const sendBtn = document.querySelector('[data-zsqa="message_send_btn"]');
+                    if (sendBtn) {
+                        sendBtn.click();
+                    }
+                }, 300);
+            }, 500);
             
         }, 300);
     };
