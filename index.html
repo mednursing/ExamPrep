@@ -550,7 +550,7 @@
                 <span>🔒</span>
                 <span>AUTHORIZED CERTIFICATION PORTAL</span>
             </div>
-            <h1>10 Medical Professional Certification Excellence</h1>
+            <h1>11 Medical Professional Certification Excellence</h1>
             <p>Elevate your medical career with internationally recognized certification exams. Join thousands of healthcare professionals achieving excellence through our premium certification programs.</p>
             <div class="cta-buttons">
                 <a href="#cta-section" class="btn btn-primary">Get Started →</a>
@@ -736,86 +736,9 @@
         </div>
     </footer>
 
-     <script>window.$zoho=window.$zoho || {};$zoho.salesiq=$zoho.salesiq||{ready:function(){}}</script>
+    <!-- Zoho SalesIQ Chat Widget -->
+    <script>window.$zoho=window.$zoho || {};$zoho.salesiq=$zoho.salesiq||{ready:function(){}}</script>
     <script id="zsiqscript" src="https://salesiq.zohopublic.com/widget?wc=siq8b224c61de3775c5e03699165e49a6040479a11d88222b17b6a003a21096b3e2" defer></script>
-    
-    <script>
-    function log(msg) {
-        console.log(msg);
-        document.getElementById('status').innerHTML += msg + '<br>';
-    }
-    
-    // Wait for Zoho SalesIQ to be ready
-    $zoho.salesiq.ready = function() {
-        log('✅ Zoho SalesIQ Ready');
-        
-        // AUTO-CLICK: Wait for widget to fully load, then click chat button
-        setTimeout(function() {
-            log('🔵 Auto-clicking chat button...');
-            
-            // Method 1: Use Zoho SalesIQ API to open chat
-            if ($zoho.salesiq.floatwindow) {
-                log('📌 Using floatwindow.visible(show)');
-                $zoho.salesiq.floatwindow.visible('show');
-            }
-            
-            // Method 2: Click the "Chat with us now" button after widget opens
-            setTimeout(function() {
-                // Try to find and click the "Chat with us now" button
-                const chatButton = document.querySelector('[data-zsqa="homepage_list_title"]');
-                if (chatButton) {
-                    log('📌 Found "Chat with us now" button, clicking...');
-                    chatButton.click();
-                } else {
-                    log('⚠️ Chat button not found in main document, trying iframe...');
-                    
-                    // Try finding it inside iframe
-                    const iframes = document.querySelectorAll('iframe');
-                    iframes.forEach(function(iframe, index) {
-                        try {
-                            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                            const iframeChatBtn = iframeDoc.querySelector('[data-zsqa="homepage_list_title"]');
-                            if (iframeChatBtn) {
-                                log('📌 Found button in iframe #' + index + ', clicking...');
-                                iframeChatBtn.click();
-                            }
-                        } catch(e) {
-                            // Cross-origin iframe, can't access
-                        }
-                    });
-                }
-            }, 1000);
-            
-            // Method 3: Send "hello" message after chat opens
-            setTimeout(function() {
-                log('📨 Attempting to send "hello" message...');
-                
-                // Use Zoho API to send message
-                if ($zoho.salesiq.visitor && $zoho.salesiq.visitor.question) {
-                    $zoho.salesiq.visitor.question('hello');
-                    log('✅ Message sent via visitor.question API');
-                } else {
-                    log('⚠️ visitor.question API not available');
-                    
-                    // Try chat API
-                    if ($zoho.salesiq.chat) {
-                        log('📌 Trying chat.start...');
-                        $zoho.salesiq.chat.start();
-                    }
-                }
-            }, 3000);
-            
-        }, 2000); // Wait 2 seconds for widget to fully render
-        
-        // Also add manual button handler as backup
-        document.getElementById('startChatBtn').addEventListener('click', function() {
-            log('🔵 Manual button clicked - Starting chat...');
-            if ($zoho.salesiq.floatwindow) {
-                $zoho.salesiq.floatwindow.visible('show');
-            }
-        });
-    };
-    </script>
 
 </body>
 </html>
