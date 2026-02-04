@@ -589,6 +589,10 @@
         <div class="logo">📊 Review Bot Admin</div>
         <div class="stats">
             <div class="stat-item">
+                <div class="stat-value" id="pendingApprovals" style="color: #f39c12;">0</div>
+                <div class="stat-label">Pending Approvals</div>
+            </div>
+            <div class="stat-item">
                 <div class="stat-value" id="totalLeads">0</div>
                 <div class="stat-label">Total Leads</div>
             </div>
@@ -605,43 +609,83 @@
 
     <!-- Main Container -->
     <div class="container">
-        <!-- Controls -->
-        <div class="controls">
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Search by email or name...">
-            </div>
-            <select class="filter-dropdown" id="statusFilter">
-                <option value="">All Statuses</option>
-                <optgroup label="Active Steps">
-                    <option value="Step 1">Step 1 - Compliance</option>
-                    <option value="Step 2A">Step 2A - Amazon Check</option>
-                    <option value="Step 3A">Step 3A - Task Details</option>
-                    <option value="Step 3B">Step 3B - Final Decision</option>
-                    <option value="Step 4A">Step 4A - Project Not Accepted</option>
-                    <option value="Step 4B">Step 4B - Send Kindle Details</option>
-                    <option value="Step 4C">Step 4C - Day 2 Book 1</option>
-                    <option value="Step 4D">Step 4D - Day 2 Book 2</option>
-                    <option value="Step 5A">Step 5A - Day 3</option>
-                    <option value="Step 5B">Step 5B - Day 4</option>
-                    <option value="Step 5C">Step 5C - Day 5</option>
-                    <option value="Step 5D">Step 5D - Email Confirmation</option>
-                </optgroup>
-                <optgroup label="Exit Steps">
-                    <option value="Exit - Project Complete">✅ Project Complete</option>
-                    <option value="Exit - Not Interested">❌ Not Interested</option>
-                    <option value="Exit - Ineligible">⚠️ Ineligible</option>
-                    <option value="Exit - Forwarded">📞 Forwarded to Operator</option>
-                </optgroup>
-            </select>
-            <button class="refresh-btn" onclick="loadLeads()">🔄 Refresh</button>
-            <select class="filter-dropdown" id="sortDropdown" style="min-width: 180px;">
-                <option value="last_updated_desc">📅 Newest First</option>
-                <option value="last_updated_asc">📅 Oldest First</option>
-                <option value="name_asc">🔤 Name A-Z</option>
-                <option value="name_desc">🔤 Name Z-A</option>
-                <option value="email_asc">📧 Email A-Z</option>
-            </select>
+        <!-- Tab Navigation -->
+        <div class="tab-navigation" style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <button class="tab-btn active" onclick="switchTab('leads')" id="tabLeads" style="padding: 12px 24px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; background: linear-gradient(135deg, #667eea, #764ba2); color: #fff;">📋 All Leads</button>
+            <button class="tab-btn" onclick="switchTab('approvals')" id="tabApprovals" style="padding: 12px 24px; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; font-weight: 600; cursor: pointer; background: rgba(255,255,255,0.05); color: #fff;">
+                📝 Project Acceptance Requests <span id="pendingBadge" style="background: #f39c12; padding: 2px 8px; border-radius: 10px; font-size: 12px; margin-left: 5px;">0</span>
+            </button>
         </div>
+
+        <!-- PROJECT ACCEPTANCE REQUESTS SECTION -->
+        <div id="approvalsSection" style="display: none;">
+            <div class="section-header" style="margin-bottom: 20px;">
+                <h2 style="font-size: 20px; color: #fff; margin-bottom: 10px;">📝 Project Acceptance Requests</h2>
+                <p style="color: rgba(255,255,255,0.6); font-size: 14px;">Users who clicked "Project Accepted" - Verify on Upwork before approving</p>
+            </div>
+            
+            <div class="table-container" id="approvalsTableContainer">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Name</th>
+                            <th>Requested At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="approvalsTable">
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="empty-state" id="approvalsEmpty" style="display: none;">
+                <div class="icon">✅</div>
+                <h3>No Pending Approvals</h3>
+                <p>All project acceptance requests have been processed</p>
+            </div>
+        </div>
+
+        <!-- LEADS SECTION -->
+        <div id="leadsSection">
+            <!-- Controls -->
+            <div class="controls">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search by email or name...">
+                </div>
+                <select class="filter-dropdown" id="statusFilter">
+                    <option value="">All Statuses</option>
+                    <optgroup label="Active Steps">
+                        <option value="Step 1">Step 1 - Compliance</option>
+                        <option value="Step 2A">Step 2A - Amazon Check</option>
+                        <option value="Step 3A">Step 3A - Task Details</option>
+                        <option value="Step 3B">Step 3B - Final Decision</option>
+                        <option value="Step 4A">Step 4A - Project Not Accepted</option>
+                        <option value="Step 4A-Pending">Step 4A-Pending - Awaiting Approval</option>
+                        <option value="Step 4B">Step 4B - Send Kindle Details</option>
+                        <option value="Step 4C">Step 4C - Day 2 Book 1</option>
+                        <option value="Step 4D">Step 4D - Day 2 Book 2</option>
+                        <option value="Step 5A">Step 5A - Day 3</option>
+                        <option value="Step 5B">Step 5B - Day 4</option>
+                        <option value="Step 5C">Step 5C - Day 5</option>
+                        <option value="Step 5D">Step 5D - Email Confirmation</option>
+                    </optgroup>
+                    <optgroup label="Exit Steps">
+                        <option value="Exit - Project Complete">✅ Project Complete</option>
+                        <option value="Exit - Not Interested">❌ Not Interested</option>
+                        <option value="Exit - Ineligible">⚠️ Ineligible</option>
+                        <option value="Exit - Forwarded">📞 Forwarded to Operator</option>
+                    </optgroup>
+                </select>
+                <button class="refresh-btn" onclick="loadLeads()">🔄 Refresh</button>
+                <select class="filter-dropdown" id="sortDropdown" style="min-width: 180px;">
+                    <option value="last_updated_desc">📅 Newest First</option>
+                    <option value="last_updated_asc">📅 Oldest First</option>
+                    <option value="name_asc">🔤 Name A-Z</option>
+                    <option value="name_desc">🔤 Name Z-A</option>
+                    <option value="email_asc">📧 Email A-Z</option>
+                </select>
+            </div>
 
         <!-- Loading -->
         <div class="loading" id="loading">
@@ -682,6 +726,38 @@
             <button class="page-btn" onclick="changePage(1)" id="nextBtn">Next →</button>
             <span class="records-info" id="recordsInfo">Showing 1-10 of 100</span>
         </div>
+        </div><!-- End leadsSection -->
+    </div>
+
+    <!-- Rejection Modal -->
+    <div class="modal-overlay" id="rejectModal">
+        <div class="modal">
+            <h2>❌ Reject Project Acceptance</h2>
+            <form id="rejectForm">
+                <input type="hidden" id="rejectKey">
+                <input type="hidden" id="rejectEmail">
+                
+                <div class="form-group">
+                    <label>Rejection Reason</label>
+                    <select id="rejectReason" style="width: 100%; padding: 15px; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; background: rgba(255,255,255,0.05); color: #fff; font-size: 16px;">
+                        <option value="not_found">Project not found on Upwork</option>
+                        <option value="not_accepted">Project not accepted on Upwork yet</option>
+                        <option value="different_user">User doesn't match Upwork freelancer</option>
+                        <option value="other">Other reason</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Additional Notes (optional)</label>
+                    <input type="text" id="rejectNotes" placeholder="Enter additional notes...">
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeRejectModal()">Cancel</button>
+                    <button type="submit" class="btn-save" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">❌ Confirm Rejection</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <!-- Edit Modal -->
@@ -710,6 +786,7 @@
                             <option value="Step 3A - Task Details">Step 3A - Task Details</option>
                             <option value="Step 3B - Final Decision">Step 3B - Final Decision</option>
                             <option value="Step 4A - Project Not Accepted Yet">Step 4A - Project Not Accepted Yet</option>
+                            <option value="Step 4A-Pending - Awaiting Admin Approval">Step 4A-Pending - Awaiting Admin Approval</option>
                             <option value="Step 4B - Send Kindle Details">Step 4B - Send Kindle Details</option>
                             <option value="Step 4C - Day 2 Book 1">Step 4C - Day 2 Book 1</option>
                             <option value="Step 4D - Day 2 Book 2">Step 4D - Day 2 Book 2</option>
@@ -771,6 +848,7 @@
             "Step 3A - Task Details": "Ask if user wants task details",
             "Step 3B - Final Decision": "Detailed task instructions, awaiting assignment",
             "Step 4A - Project Not Accepted Yet": "Waiting for project acceptance",
+            "Step 4A-Pending - Awaiting Admin Approval": "⏳ User clicked accepted, pending admin verification",
             "Step 4B - Send Kindle Details": "Project accepted, sending Kindle details",
             "Step 4C - Day 2 Book 1": "Day 1 done, waiting for Day 2 Book 1 screenshots",
             "Step 4D - Day 2 Book 2": "Day 2 Book 1 done, waiting for Book 2 screenshots",
@@ -791,6 +869,262 @@
         const recordsPerPage = 10;
         let sortField = 'last_updated';
         let sortOrder = 'desc'; // desc = newest first
+        let currentTab = 'leads';
+
+        // ============================================
+        // TAB SWITCHING
+        // ============================================
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            // Update tab button styles
+            document.getElementById('tabLeads').style.background = tab === 'leads' 
+                ? 'linear-gradient(135deg, #667eea, #764ba2)' 
+                : 'rgba(255,255,255,0.05)';
+            document.getElementById('tabLeads').style.border = tab === 'leads' 
+                ? 'none' 
+                : '1px solid rgba(255,255,255,0.2)';
+            
+            document.getElementById('tabApprovals').style.background = tab === 'approvals' 
+                ? 'linear-gradient(135deg, #f39c12, #e67e22)' 
+                : 'rgba(255,255,255,0.05)';
+            document.getElementById('tabApprovals').style.border = tab === 'approvals' 
+                ? 'none' 
+                : '1px solid rgba(255,255,255,0.2)';
+            
+            // Show/hide sections
+            document.getElementById('leadsSection').style.display = tab === 'leads' ? 'block' : 'none';
+            document.getElementById('approvalsSection').style.display = tab === 'approvals' ? 'block' : 'none';
+            
+            if (tab === 'approvals') {
+                renderApprovals();
+            }
+        }
+
+        // ============================================
+        // RENDER PENDING APPROVALS
+        // ============================================
+        function renderApprovals() {
+            const tbody = document.getElementById('approvalsTable');
+            
+            // Filter leads with pending approval status
+            const pendingLeads = Object.entries(allLeads)
+                .filter(([key, lead]) => lead.bot_step === 'Step 4A-Pending - Awaiting Admin Approval')
+                .map(([key, lead]) => ({ key, ...lead }))
+                .sort((a, b) => {
+                    const dateA = a.project_accepted_at ? new Date(a.project_accepted_at).getTime() : 0;
+                    const dateB = b.project_accepted_at ? new Date(b.project_accepted_at).getTime() : 0;
+                    return dateB - dateA; // Newest first
+                });
+            
+            if (pendingLeads.length === 0) {
+                document.getElementById('approvalsTableContainer').style.display = 'none';
+                document.getElementById('approvalsEmpty').style.display = 'block';
+                return;
+            }
+            
+            document.getElementById('approvalsTableContainer').style.display = 'block';
+            document.getElementById('approvalsEmpty').style.display = 'none';
+            
+            let html = '';
+            for (const lead of pendingLeads) {
+                const requestedAt = formatDate(lead.project_accepted_at || lead.last_updated);
+                
+                html += `
+                    <tr>
+                        <td class="email-cell">${lead.email || '-'}</td>
+                        <td class="name-cell">${lead.name || '-'}</td>
+                        <td class="date-cell">${requestedAt}</td>
+                        <td>
+                            <button class="action-btn" onclick="approveProject('${lead.key}', '${lead.email}', '${lead.name || 'User'}')" 
+                                style="background: rgba(46, 204, 113, 0.2); color: #2ecc71; margin-right: 8px;">
+                                ✅ Approve
+                            </button>
+                            <button class="action-btn" onclick="openRejectModal('${lead.key}', '${lead.email}')" 
+                                style="background: rgba(231, 76, 60, 0.2); color: #e74c3c;">
+                                ❌ Reject
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }
+            
+            tbody.innerHTML = html;
+        }
+
+        // ============================================
+        // APPROVE PROJECT
+        // ============================================
+        async function approveProject(key, email, name) {
+            if (!confirm(`Approve project for ${email}?\n\nThis will:\n1. Update status to Step 4B\n2. Send approval email to user\n3. Reveal book details in chat`)) {
+                return;
+            }
+            
+            try {
+                // Update Firebase
+                await fetch(`${FIREBASE_URL}/leads/${key}.json`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({
+                        bot_step: 'Step 4B - Send Kindle Details',
+                        admin_approved: true,
+                        admin_approved_at: new Date().toISOString(),
+                        last_updated: new Date().toISOString()
+                    })
+                });
+                
+                // Send approval email via EmailJS or your email service
+                await sendApprovalEmail(email, name);
+                
+                // Update local data
+                allLeads[key].bot_step = 'Step 4B - Send Kindle Details';
+                allLeads[key].admin_approved = true;
+                allLeads[key].admin_approved_at = new Date().toISOString();
+                
+                renderApprovals();
+                updateStats(allLeads);
+                showToast(`✅ Project approved for ${email}`);
+                
+            } catch (error) {
+                console.error('Error approving project:', error);
+                showToast('Error approving project', true);
+            }
+        }
+
+        // ============================================
+        // SEND APPROVAL EMAIL VIA ZOHO FLOW WEBHOOK
+        // ============================================
+        async function sendApprovalEmail(email, name) {
+            // ==============================================
+            // ZOHO FLOW WEBHOOK SETUP INSTRUCTIONS:
+            // ==============================================
+            // 1. Go to Zoho Flow (flow.zoho.com)
+            // 2. Create new Flow → "Start from scratch"
+            // 3. Trigger: "Webhook" → Copy the webhook URL
+            // 4. Action: "Zoho Mail" → "Send Email"
+            //    - To: {{email}}
+            //    - Subject: Project Approved - Book Details Now Available
+            //    - Body: Use the template below with {{name}} variable
+            // 5. Replace ZOHO_FLOW_WEBHOOK_URL below with your webhook URL
+            // ==============================================
+            
+            const ZOHO_FLOW_WEBHOOK_URL = 'https://flow.zoho.com/913651648/flow/webhook/incoming?zapikey=1001.eaa6a7b3cce15d299d976ce40e8d2328.538729a0f44b72d3d8445a2d8671ea8b&isdebug=false';
+            
+            const emailData = {
+                to_email: email,
+                to_name: name || 'User',
+                subject: 'Project Approved - Book Details Now Available',
+                message: `Dear ${name || 'User'},
+
+Great news! Your project has been approved! 🎉
+
+Book details are now available in your chat.
+
+🔗 Access your details here: https://mednursing.github.io/ExamPrep/
+
+IMPORTANT: All communication regarding this project will happen exclusively through https://mednursing.github.io/ExamPrep/
+
+Please do not reply to this email. Return to the chat to view your book details and continue the process.
+
+Thank you!`
+            };
+            
+            // Log for debugging
+            console.log('📧 Sending Approval Email via Zoho Flow:');
+            console.log('To:', email);
+            console.log('Name:', name);
+            
+            // Check if webhook URL is configured
+            if (ZOHO_FLOW_WEBHOOK_URL === 'YOUR_ZOHO_FLOW_WEBHOOK_URL') {
+                console.warn('⚠️ Zoho Flow webhook not configured. Email not sent.');
+                console.log('📋 Email would be:', emailData);
+                showToast('⚠️ Email not sent - Configure Zoho Flow webhook', true);
+                return false;
+            }
+            
+            try {
+                const response = await fetch(ZOHO_FLOW_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(emailData)
+                });
+                
+                if (response.ok) {
+                    console.log('✅ Email sent successfully via Zoho Flow');
+                    return true;
+                } else {
+                    console.error('❌ Zoho Flow webhook error:', response.status);
+                    return false;
+                }
+            } catch (error) {
+                console.error('❌ Error calling Zoho Flow webhook:', error);
+                return false;
+            }
+        }
+
+        // ============================================
+        // REJECT PROJECT - MODAL
+        // ============================================
+        function openRejectModal(key, email) {
+            document.getElementById('rejectKey').value = key;
+            document.getElementById('rejectEmail').value = email;
+            document.getElementById('rejectReason').value = 'not_found';
+            document.getElementById('rejectNotes').value = '';
+            document.getElementById('rejectModal').classList.add('active');
+        }
+
+        function closeRejectModal() {
+            document.getElementById('rejectModal').classList.remove('active');
+        }
+
+        document.getElementById('rejectForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const key = document.getElementById('rejectKey').value;
+            const email = document.getElementById('rejectEmail').value;
+            const reason = document.getElementById('rejectReason').value;
+            const notes = document.getElementById('rejectNotes').value;
+            
+            const reasonTexts = {
+                'not_found': 'Project not found on Upwork',
+                'not_accepted': 'Project not accepted on Upwork yet',
+                'different_user': 'User doesn\'t match Upwork freelancer',
+                'other': 'Other reason'
+            };
+            
+            try {
+                // Update Firebase - move back to Step 4A
+                await fetch(`${FIREBASE_URL}/leads/${key}.json`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({
+                        bot_step: 'Step 4A - Project Not Accepted Yet',
+                        admin_rejected: true,
+                        admin_rejected_at: new Date().toISOString(),
+                        rejection_reason: reasonTexts[reason],
+                        rejection_notes: notes,
+                        last_updated: new Date().toISOString()
+                    })
+                });
+                
+                // Update local data
+                allLeads[key].bot_step = 'Step 4A - Project Not Accepted Yet';
+                
+                closeRejectModal();
+                renderApprovals();
+                updateStats(allLeads);
+                showToast(`❌ Project rejected for ${email}`);
+                
+            } catch (error) {
+                console.error('Error rejecting project:', error);
+                showToast('Error rejecting project', true);
+            }
+        });
+
+        // Close reject modal on outside click
+        document.getElementById('rejectModal').addEventListener('click', function(e) {
+            if (e.target === this) closeRejectModal();
+        });
 
         // ============================================
         // LOAD LEADS
@@ -1125,12 +1459,15 @@
         }
 
         function updateStats(leads) {
-            let total = 0, active = 0, completed = 0;
+            let total = 0, active = 0, completed = 0, pending = 0;
             
             for (const lead of Object.values(leads)) {
                 total++;
                 if (lead.bot_step && lead.bot_step.includes('Exit - Project Complete')) {
                     completed++;
+                } else if (lead.bot_step && lead.bot_step.includes('Step 4A-Pending')) {
+                    pending++;
+                    active++;
                 } else if (lead.bot_step && !lead.bot_step.includes('Exit')) {
                     active++;
                 }
@@ -1139,6 +1476,11 @@
             document.getElementById('totalLeads').textContent = total;
             document.getElementById('activeLeads').textContent = active;
             document.getElementById('completedLeads').textContent = completed;
+            document.getElementById('pendingApprovals').textContent = pending;
+            document.getElementById('pendingBadge').textContent = pending;
+            
+            // Highlight pending badge if there are pending approvals
+            document.getElementById('pendingBadge').style.background = pending > 0 ? '#e74c3c' : '#f39c12';
         }
 
         function showToast(message, isError = false) {
