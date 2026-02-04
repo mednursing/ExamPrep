@@ -1239,6 +1239,30 @@
             $zoho.salesiq.floatwindow.visible('show');
         }
         
+        // Click chat button after 500ms (wait for widget to render)
+        setTimeout(function() {
+            const chatButton = document.querySelector('[data-zsqa="homepage_list_title"]');
+            if (chatButton) {
+                chatButton.click();
+            }
+            
+            // Wait 2s for chat to fully open, then send hello message
+            setTimeout(function() {
+                // Try visitor.question to put text in textarea
+                if ($zoho.salesiq.visitor && $zoho.salesiq.visitor.question) {
+                    $zoho.salesiq.visitor.question('hello');
+                    console.log('✅ visitor.question("hello") called');
+                }
+                
+                // Also try chat.start
+                if ($zoho.salesiq.chat && $zoho.salesiq.chat.start) {
+                    $zoho.salesiq.chat.start('hello');
+                    console.log('✅ chat.start("hello") called');
+                }
+            }, 2000);
+            
+        }, 500);
+        
         // Use Zoho's onVisitorInfo callback to get email
         if ($zoho.salesiq.visitor && $zoho.salesiq.visitor.info) {
             // Try to get visitor info periodically
