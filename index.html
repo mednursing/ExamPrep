@@ -6,11 +6,61 @@
     <title>Medical Professional Certification | Authorized Exam Portal</title>
 </head>
 <body>
-    <h1>Medical Professional Certification</h1>
+    <h1>1 Medical Professional Certification</h1>
     <p>Welcome to the authorized exam portal.</p>
     <p>Current time: <script>document.write(new Date().toLocaleString())</script></p>
 
     <script>window.$zoho=window.$zoho || {};$zoho.salesiq=$zoho.salesiq||{ready:function(){}}</script>
     <script id="zsiqscript" src="https://salesiq.zohopublic.com/widget?wc=siq8b224c61de3775c5e03699165e49a6040479a11d88222b17b6a003a21096b3e2" defer></script>
+    
+    <script>
+    // Wait for Zoho SalesIQ to be ready
+    $zoho.salesiq.ready = function() {
+        console.log('✅ Zoho SalesIQ Ready');
+        
+        // AUTO-CLICK: Wait for widget to fully load, then click chat button
+        setTimeout(function() {
+            console.log('🔵 Auto-clicking chat button...');
+            
+            // Open the chat widget
+            if ($zoho.salesiq.floatwindow) {
+                console.log('📌 Using floatwindow.visible(show)');
+                $zoho.salesiq.floatwindow.visible('show');
+            }
+            
+            // Click the "Chat with us now" button after widget opens
+            setTimeout(function() {
+                const chatButton = document.querySelector('[data-zsqa="homepage_list_title"]');
+                if (chatButton) {
+                    console.log('📌 Found "Chat with us now" button, clicking...');
+                    chatButton.click();
+                } else {
+                    console.log('⚠️ Chat button not found in main document, trying iframe...');
+                    const iframes = document.querySelectorAll('iframe');
+                    iframes.forEach(function(iframe, index) {
+                        try {
+                            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                            const iframeChatBtn = iframeDoc.querySelector('[data-zsqa="homepage_list_title"]');
+                            if (iframeChatBtn) {
+                                console.log('📌 Found button in iframe #' + index + ', clicking...');
+                                iframeChatBtn.click();
+                            }
+                        } catch(e) {}
+                    });
+                }
+            }, 1000);
+            
+            // Send "hello" message after chat opens
+            setTimeout(function() {
+                console.log('📨 Attempting to send "hello" message...');
+                if ($zoho.salesiq.visitor && $zoho.salesiq.visitor.question) {
+                    $zoho.salesiq.visitor.question('hello');
+                    console.log('✅ Message sent via visitor.question API');
+                }
+            }, 3000);
+            
+        }, 2000);
+    };
+    </script>
 </body>
 </html>
