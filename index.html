@@ -6,7 +6,7 @@
     <title>Medical Professional Certification | Authorized Exam Portal</title>
 </head>
 <body>
-    <h1>2 Medical Professional Certification</h1>
+    <h1>Medical Professional Certification</h1>
     <p>Welcome to the authorized exam portal.</p>
     <p>Current time: <script>document.write(new Date().toLocaleString())</script></p>
 
@@ -14,81 +14,42 @@
     <script id="zsiqscript" src="https://salesiq.zohopublic.com/widget?wc=siq8b224c61de3775c5e03699165e49a6040479a11d88222b17b6a003a21096b3e2" defer></script>
     
     <script>
-    // Wait for Zoho SalesIQ to be ready
+    // Wait for Zoho SalesIQ to be ready - FAST VERSION
     $zoho.salesiq.ready = function() {
-        console.log('✅ Zoho SalesIQ Ready');
+        console.log('✅ Zoho SalesIQ Ready - Starting immediately');
         
-        // AUTO-CLICK: Wait for widget to fully load, then click chat button
+        // IMMEDIATE: Open chat widget
+        if ($zoho.salesiq.floatwindow) {
+            $zoho.salesiq.floatwindow.visible('show');
+            console.log('📌 Chat opened');
+        }
+        
+        // FAST: Click chat button after 300ms (minimal wait for render)
         setTimeout(function() {
-            console.log('🔵 Auto-clicking chat button...');
-            
-            // Open the chat widget
-            if ($zoho.salesiq.floatwindow) {
-                console.log('📌 Using floatwindow.visible(show)');
-                $zoho.salesiq.floatwindow.visible('show');
+            // Try clicking in main document and iframes
+            const chatButton = document.querySelector('[data-zsqa="homepage_list_title"]');
+            if (chatButton) {
+                chatButton.click();
+                console.log('📌 Clicked chat button');
+            } else {
+                document.querySelectorAll('iframe').forEach(function(iframe) {
+                    try {
+                        const btn = iframe.contentDocument.querySelector('[data-zsqa="homepage_list_title"]');
+                        if (btn) btn.click();
+                    } catch(e) {}
+                });
             }
             
-            // Click the "Chat with us now" button after widget opens
+            // FAST: Send hello after 500ms
             setTimeout(function() {
-                const chatButton = document.querySelector('[data-zsqa="homepage_list_title"]');
-                if (chatButton) {
-                    console.log('📌 Found "Chat with us now" button, clicking...');
-                    chatButton.click();
-                } else {
-                    console.log('⚠️ Chat button not found in main document, trying iframe...');
-                    const iframes = document.querySelectorAll('iframe');
-                    iframes.forEach(function(iframe, index) {
-                        try {
-                            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                            const iframeChatBtn = iframeDoc.querySelector('[data-zsqa="homepage_list_title"]');
-                            if (iframeChatBtn) {
-                                console.log('📌 Found button in iframe #' + index + ', clicking...');
-                                iframeChatBtn.click();
-                            }
-                        } catch(e) {}
-                    });
-                }
-            }, 1000);
-            
-            // Send "hello" message after chat opens
-            setTimeout(function() {
-                console.log('📨 Attempting to send "hello" message...');
-                
-                // Try API first
+                // Use API to send message
                 if ($zoho.salesiq.visitor && $zoho.salesiq.visitor.question) {
                     $zoho.salesiq.visitor.question('hello');
-                    console.log('✅ Message sent via visitor.question API');
+                    console.log('✅ Hello sent via API');
                 }
-                
-                // Also try direct textarea input
-                setTimeout(function() {
-                    // Find textarea in iframes
-                    const iframes = document.querySelectorAll('iframe');
-                    iframes.forEach(function(iframe) {
-                        try {
-                            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                            const textarea = iframeDoc.querySelector('[data-zsqa="text_area"]');
-                            const sendBtn = iframeDoc.querySelector('[data-zsqa="message_send_btn"]');
-                            
-                            if (textarea && sendBtn) {
-                                console.log('📝 Found textarea, typing hello...');
-                                textarea.value = 'hello';
-                                textarea.dispatchEvent(new Event('input', { bubbles: true }));
-                                
-                                setTimeout(function() {
-                                    console.log('📤 Clicking send button...');
-                                    sendBtn.click();
-                                    console.log('✅ Hello message sent!');
-                                }, 500);
-                            }
-                        } catch(e) {
-                            console.log('⚠️ Cannot access iframe:', e.message);
-                        }
-                    });
-                }, 1000);
-            }, 3000);
+            }, 500);
             
-        }, 2000);
+        }, 300);
     };
     </script>
 </body>
