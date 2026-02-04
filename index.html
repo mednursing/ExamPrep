@@ -946,10 +946,37 @@
     
     // Capture all console errors
     window.addEventListener('unhandledrejection', function(event) {
-        console.group('🔴 Unhandled Promise Rejection');
-        console.error('Reason:', event.reason);
-        if (event.reason && event.reason.error) {
-            console.error('Error Details:', event.reason.error);
+        console.group('🔴 Promise Rejection - FULL ERROR');
+        console.error('Full Reason Object:', event.reason);
+        
+        // Deep inspect the error
+        if (event.reason) {
+            console.error('Reason Keys:', Object.keys(event.reason));
+            
+            if (event.reason.error) {
+                console.error('📋 error property:', event.reason.error);
+                console.error('📋 error keys:', Object.keys(event.reason.error));
+                console.error('📋 error JSON:', JSON.stringify(event.reason.error, null, 2));
+            }
+            if (event.reason.message) {
+                console.error('💬 message:', event.reason.message);
+            }
+            if (event.reason.data) {
+                console.error('📦 data:', event.reason.data);
+            }
+            if (event.reason.response) {
+                console.error('📨 response:', event.reason.response);
+            }
+            if (event.reason.status) {
+                console.error('🔢 status:', event.reason.status);
+            }
+            
+            // Try to stringify the entire thing
+            try {
+                console.error('🔍 FULL JSON:', JSON.stringify(event.reason, null, 2));
+            } catch(e) {
+                console.error('Could not stringify');
+            }
         }
         console.groupEnd();
     });
@@ -959,8 +986,8 @@
     </script>
     
     <script>window.$zoho=window.$zoho || {};$zoho.salesiq=$zoho.salesiq||{ready:function(){}}</script>
-    <script id="zsiqscript" src="https://salesiq.zohopublic.com/widget?wc=siq9c17f4e59974eaffde67f13c0f4db1a934e57e931b461759881ae52416a5f018" defer></script>
-    
+    <script id="zsiqscript" src="https://salesiq.zohopublic.com/widget?wc=siq8b224c61de3775c5e03699165e49a6040479a11d88222b17b6a003a21096b3e2" defer></script>
+
     <script>
     // Debug Zoho widget state
     $zoho.salesiq.ready = function() {
