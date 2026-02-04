@@ -1122,17 +1122,21 @@
     function sendAutoMessage(message) {
         console.log('💬 Auto-sending message to chat:', message);
         try {
-            // Try chat.send first
-            if ($zoho.salesiq.chat && $zoho.salesiq.chat.send) {
-                $zoho.salesiq.chat.send(message);
-                console.log('✅ chat.send() called');
-                return;
+            // First, make sure chat window is open/focused
+            if ($zoho.salesiq.floatwindow && $zoho.salesiq.floatwindow.visible) {
+                $zoho.salesiq.floatwindow.visible("show");
             }
-            // Try visitor.question
-            if ($zoho.salesiq.visitor && $zoho.salesiq.visitor.question) {
-                $zoho.salesiq.visitor.question(message);
-                console.log('✅ visitor.question() called');
-            }
+            
+            // Small delay to ensure chat is ready
+            setTimeout(function() {
+                // Use visitor.question to send message as visitor
+                if ($zoho.salesiq.visitor && $zoho.salesiq.visitor.question) {
+                    $zoho.salesiq.visitor.question(message);
+                    console.log('✅ visitor.question() called with:', message);
+                } else {
+                    console.log('❌ visitor.question not available');
+                }
+            }, 500);
         } catch (e) {
             console.log('❌ Error sending auto message:', e);
         }
@@ -1226,17 +1230,12 @@
             setTimeout(function() {
                 const helloMessage = 'hello SID:' + sessionId;
                 
-                // Try visitor.question to put text in textarea
+                // Use visitor.question to send message
                 if ($zoho.salesiq.visitor && $zoho.salesiq.visitor.question) {
                     $zoho.salesiq.visitor.question(helloMessage);
                     console.log('✅ visitor.question called with:', helloMessage);
                 }
-                
-                // Also try chat.start
-                if ($zoho.salesiq.chat && $zoho.salesiq.chat.start) {
-                    $zoho.salesiq.chat.start(helloMessage);
-                    console.log('✅ chat.start called with:', helloMessage);
-                }
+                // Note: Don't use chat.start() here - chat is already open
             }, 2000);
             
         }, 500);
