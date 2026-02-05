@@ -1094,11 +1094,11 @@ Thank you!`
             };
             
             try {
-                // Update Firebase - move back to Step 4A
+                // Update Firebase - keep in pending step, bot will handle the rejection message
                 await fetch(`${FIREBASE_URL}/leads/${key}.json`, {
                     method: 'PATCH',
                     body: JSON.stringify({
-                        bot_step: 'Step 4A - Project Not Accepted Yet',
+                        bot_step: 'Step 4A-Pending - Awaiting Admin Approval',
                         admin_rejected: true,
                         admin_rejected_at: new Date().toISOString(),
                         rejection_reason: reasonTexts[reason],
@@ -1108,7 +1108,8 @@ Thank you!`
                 });
                 
                 // Update local data
-                allLeads[key].bot_step = 'Step 4A - Project Not Accepted Yet';
+                allLeads[key].bot_step = 'Step 4A-Pending - Awaiting Admin Approval';
+                allLeads[key].admin_rejected = true;
                 
                 closeRejectModal();
                 renderApprovals();
