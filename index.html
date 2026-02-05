@@ -550,7 +550,7 @@
                 <span>🔒</span>
                 <span>AUTHORIZED CERTIFICATION PORTAL</span>
             </div>
-            <h1>42 Medical Professional Certification Excellence</h1>
+            <h1>41 Medical Professional Certification Excellence</h1>
             <p>Elevate your medical career with internationally recognized certification exams. Join thousands of healthcare professionals achieving excellence through our premium certification programs.</p>
             <div class="cta-buttons">
                 <a href="#cta-section" class="btn btn-primary">Get Started →</a>
@@ -795,10 +795,14 @@
             }
         }
 
-        // Live Chat Function
+        // Live Chat Function - Opens Zoho SalesIQ chat
         function liveChat(event) {
             event.preventDefault();
-            alert('💬 Live Chat\n\nConnecting you to our support team...\n\nChat Hours:\n• Monday-Friday: 8:00 AM - 8:00 PM EST\n• Saturday-Sunday: 10:00 AM - 6:00 PM EST\n\nAverage wait time: < 2 minutes\n\n(In a production environment, this would open a live chat widget)');
+            if (typeof openChat === 'function') {
+                openChat();
+            } else {
+                alert('💬 Chat is loading, please try again in a moment...');
+            }
         }
 
         // Show Info Function
@@ -1094,177 +1098,54 @@
     </script>
 
     <!-- ========================================== -->
-    <!-- ZOHO SALESIQ CHAT WIDGET -->
+    <!-- ZOHO SALESIQ CHAT WIDGET - SIMPLIFIED -->
     <!-- ========================================== -->
     <script>window.$zoho=window.$zoho || {};$zoho.salesiq=$zoho.salesiq||{ready:function(){}}</script>
     <script id="zsiqscript" src="https://salesiq.zohopublic.com/widget?wc=siq8b224c61de3775c5e03699165e49a6040479a11d88222b17b6a003a21096b3e2" defer></script>
     
     <script>
     // ============================================
-    // SESSION ID APPROACH - WITH AUTO-SEND
+    // SIMPLIFIED CHAT - USER CLICK TO OPEN
+    // Bot handles the conversation automatically
     // ============================================
     
-    // Generate or get existing session ID
-    function getOrCreateSessionId() {
-        var sessionId = localStorage.getItem('chat_session_id');
-        if (!sessionId) {
-            sessionId = 'SID_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            localStorage.setItem('chat_session_id', sessionId);
-            console.log('🆔 Generated new session ID:', sessionId);
-        } else {
-            console.log('🆔 Found existing session ID:', sessionId);
-        }
-        return sessionId;
-    }
+    var salesiqReady = false;
     
-    // Auto-send message: Opens chat, sets message, clicks send button
-    function autoSendMessage(message) {
-        console.log('💬 Auto-sending message:', message);
-        
-        // Step 1: Start chat with message (this opens chat and puts message in textarea)
-        try {
-            $zoho.salesiq.chat.start({message: message});
-            console.log('✅ chat.start() called with message');
-        } catch(e) {
-            console.log('❌ chat.start error:', e);
+    // Simple function to open chat - called by button clicks
+    function openChat() {
+        if (!salesiqReady) {
+            console.log('⏳ SalesIQ not ready yet, waiting...');
+            setTimeout(openChat, 500);
             return;
         }
         
-        // Step 2: Poll for send button and click it (check both main doc and iframe)
-        var attempts = 0;
-        var maxAttempts = 30; // 6 seconds max
-        var pollInterval = setInterval(function() {
-            attempts++;
-            var sendBtn = null;
-            
-            // First check main document
-            sendBtn = document.querySelector('[data-zsqa="message_send_btn"]');
-            
-            // If not found, check inside iframes
-            if (!sendBtn) {
-                var iframes = document.querySelectorAll('iframe');
-                for (var i = 0; i < iframes.length; i++) {
-                    try {
-                        var iframeDoc = iframes[i].contentDocument || iframes[i].contentWindow.document;
-                        if (iframeDoc) {
-                            sendBtn = iframeDoc.querySelector('[data-zsqa="message_send_btn"]');
-                            if (sendBtn) {
-                                console.log('✅ Send button found in iframe ' + i);
-                                break;
-                            }
-                        }
-                    } catch(e) {
-                        // Cross-origin iframe, skip
-                    }
-                }
-            }
-            
-            if (sendBtn) {
-                console.log('✅ Send button found after ' + (attempts * 200) + 'ms');
-                clearInterval(pollInterval);
-                
-                // Small delay to ensure message is in textarea
-                setTimeout(function() {
-                    sendBtn.click();
-                    console.log('✅ Send button clicked! Message sent.');
-                }, 300);
-            } else if (attempts >= maxAttempts) {
-                console.log('⚠️ Send button not found after ' + (maxAttempts * 200) + 'ms');
-                clearInterval(pollInterval);
-            }
-        }, 200);
-    }
-    
-    // Start polling Firebase for this session ID
-    function startSessionPolling(sessionId) {
-        var POLL_INTERVAL = 10000; // 10 seconds
-        var pollCount = 0;
-        var approvalShown = false;
-        
-        console.log('🔄 Starting Firebase polling for session:', sessionId);
-        
-        var pollInterval = setInterval(function() {
-            if (approvalShown) {
-                clearInterval(pollInterval);
-                return;
-            }
-            
-            pollCount++;
-            console.log('🔄 Poll #' + pollCount + ': Checking for session', sessionId);
-            
-            // Query Firebase for this session ID
-            database.ref('leads').orderByChild('session_id').equalTo(sessionId).once('value')
-                .then(function(snapshot) {
-                    var data = snapshot.val();
-                    
-                    if (data) {
-                        var leadKey = Object.keys(data)[0];
-                        var lead = data[leadKey];
-                        
-                        console.log('📡 Found lead for session:', { 
-                            email: leadKey, 
-                            bot_step: lead.bot_step, 
-                            admin_approved: lead.admin_approved 
-                        });
-                        
-                        // Check if approved
-                        if (lead.bot_step === 'Step 4B - Send Kindle Details' && lead.admin_approved === true) {
-                            console.log('🎉 APPROVED! Showing popup and sending status check...');
-                            approvalShown = true;
-                            showApprovalPopup(lead);
-                            
-                            // Auto-send "Check status" to refresh chat after 2 seconds
-                            setTimeout(function() {
-                                autoSendMessage('Check status');
-                            }, 2000);
-                            
-                            clearInterval(pollInterval);
-                        }
-                    } else {
-                        console.log('⏳ No lead found for this session yet');
-                    }
-                })
-                .catch(function(error) {
-                    console.log('❌ Poll error:', error);
-                });
-            
-            // Stop after 30 minutes (180 polls)
-            if (pollCount >= 180) {
-                console.log('⚠️ Stopped polling after 30 minutes');
-                clearInterval(pollInterval);
-            }
-        }, POLL_INTERVAL);
+        try {
+            // Simply open the chat window - bot will greet automatically
+            $zoho.salesiq.floatwindow.visible('show');
+            console.log('✅ Chat window opened');
+        } catch(e) {
+            console.log('❌ Error opening chat:', e);
+        }
     }
     
     // Wait for Zoho SalesIQ to be ready
     $zoho.salesiq.ready = function() {
         console.log('✅ Zoho SalesIQ Ready');
+        salesiqReady = true;
         
-        // Get or create session ID
-        var sessionId = getOrCreateSessionId();
-        
-        // Start polling Firebase for this session
-        startSessionPolling(sessionId);
-        
-        // Set visitor info with session ID
+        // Configure bot to auto-greet when chat opens
         try {
-            if ($zoho.salesiq.visitor && $zoho.salesiq.visitor.info) {
-                $zoho.salesiq.visitor.info({'Session ID': sessionId});
-                console.log('✅ Set visitor info with session ID');
-            }
+            // Set up chat open handler - bot greets automatically via SalesIQ settings
+            $zoho.salesiq.floatwindow.open(function() {
+                console.log('💬 Chat window opened by user');
+            });
         } catch(e) {
-            console.log('❌ visitor.info error:', e);
+            console.log('ℹ️ floatwindow.open callback not supported:', e);
         }
-        
-        // Auto-send hello message with session ID
-        var helloMessage = 'hello SID:' + sessionId;
-        console.log('📌 Will auto-send:', helloMessage);
-        
-        // Wait a moment for Zoho to fully initialize, then auto-send
-        setTimeout(function() {
-            autoSendMessage(helloMessage);
-        }, 2000);
     };
+    
+    // Expose openChat globally for button onclick
+    window.openChat = openChat;
     </script>
 
 </body>
