@@ -261,6 +261,18 @@
             border-color: rgba(102, 126, 234, 0.4);
         }
 
+        /* Animation initial state - prevents flicker */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease-out;
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         .stat-number {
             font-size: 52px;
             font-weight: 800;
@@ -550,7 +562,7 @@
                 <span>🔒</span>
                 <span>AUTHORIZED CERTIFICATION PORTAL</span>
             </div>
-            <h1>45 Medical Professional Certification Excellence</h1>
+            <h1>47 Medical Professional Certification Excellence</h1>
             <p>Elevate your medical career with internationally recognized certification exams. Join thousands of healthcare professionals achieving excellence through our premium certification programs.</p>
             <div class="cta-buttons">
                 <a href="#cta-section" class="btn btn-primary">Get Started →</a>
@@ -561,19 +573,19 @@
 
     <!-- Stats Section -->
     <section class="stats">
-        <div class="stat-card glass">
+        <div class="stat-card glass animate-on-scroll">
             <div class="stat-number">50K+</div>
             <div class="stat-label">Certified Professionals</div>
         </div>
-        <div class="stat-card glass">
+        <div class="stat-card glass animate-on-scroll">
             <div class="stat-number">98%</div>
             <div class="stat-label">Success Rate</div>
         </div>
-        <div class="stat-card glass">
+        <div class="stat-card glass animate-on-scroll">
             <div class="stat-number">150+</div>
             <div class="stat-label">Countries Worldwide</div>
         </div>
-        <div class="stat-card glass">
+        <div class="stat-card glass animate-on-scroll">
             <div class="stat-number">24/7</div>
             <div class="stat-label">Support Available</div>
         </div>
@@ -586,32 +598,32 @@
             <p>Industry-leading standards with comprehensive support throughout your certification journey</p>
         </div>
         <div class="features-grid">
-            <div class="feature-card glass">
+            <div class="feature-card glass animate-on-scroll">
                 <div class="feature-icon">🎯</div>
                 <h3>Expert Curriculum</h3>
                 <p>Comprehensive exam preparation developed by leading medical educators and board-certified specialists</p>
             </div>
-            <div class="feature-card glass">
+            <div class="feature-card glass animate-on-scroll">
                 <div class="feature-icon">🏆</div>
                 <h3>Global Recognition</h3>
                 <p>Certifications accepted and valued by healthcare institutions worldwide across all major specialties</p>
             </div>
-            <div class="feature-card glass">
+            <div class="feature-card glass animate-on-scroll">
                 <div class="feature-icon">⚡</div>
                 <h3>Flexible Scheduling</h3>
                 <p>Choose your exam date and location from hundreds of authorized testing centers globally</p>
             </div>
-            <div class="feature-card glass">
+            <div class="feature-card glass animate-on-scroll">
                 <div class="feature-icon">🔐</div>
                 <h3>Secure Testing</h3>
                 <p>State-of-the-art proctoring technology ensuring exam integrity and credential authenticity</p>
             </div>
-            <div class="feature-card glass">
+            <div class="feature-card glass animate-on-scroll">
                 <div class="feature-icon">📊</div>
                 <h3>Instant Results</h3>
                 <p>Receive preliminary scores immediately upon completion with detailed performance analytics</p>
             </div>
-            <div class="feature-card glass">
+            <div class="feature-card glass animate-on-scroll">
                 <div class="feature-icon">💼</div>
                 <h3>Career Advancement</h3>
                 <p>Boost your professional credentials and unlock new opportunities in your medical career</p>
@@ -626,22 +638,22 @@
             <p>Certification programs available across all major medical disciplines</p>
         </div>
         <div class="specialties-grid">
-            <div class="specialty-tag" onclick="viewSpecialty('Internal Medicine')">Internal Medicine</div>
-            <div class="specialty-tag" onclick="viewSpecialty('Surgery')">Surgery</div>
-            <div class="specialty-tag" onclick="viewSpecialty('Pediatrics')">Pediatrics</div>
-            <div class="specialty-tag" onclick="viewSpecialty('Cardiology')">Cardiology</div>
-            <div class="specialty-tag" onclick="viewSpecialty('Neurology')">Neurology</div>
-            <div class="specialty-tag" onclick="viewSpecialty('Radiology')">Radiology</div>
-            <div class="specialty-tag" onclick="viewSpecialty('Anesthesiology')">Anesthesiology</div>
-            <div class="specialty-tag" onclick="viewSpecialty('Emergency Medicine')">Emergency Medicine</div>
-            <div class="specialty-tag" onclick="viewSpecialty('Psychiatry')">Psychiatry</div>
-            <div class="specialty-tag" onclick="viewSpecialty('Obstetrics & Gynecology')">Obstetrics & Gynecology</div>
-            <div class="specialty-tag" onclick="viewSpecialty('Oncology')">Oncology</div>
-            <div class="specialty-tag" onclick="viewSpecialty('Pathology')">Pathology</div>
-            <div class="specialty-tag" onclick="viewSpecialty('Dermatology')">Dermatology</div>
-            <div class="specialty-tag" onclick="viewSpecialty('Orthopedics')">Orthopedics</div>
-            <div class="specialty-tag" onclick="viewSpecialty('Family Medicine')">Family Medicine</div>
-            <div class="specialty-tag" onclick="viewSpecialty('Ophthalmology')">Ophthalmology</div>
+            <div class="specialty-tag animate-on-scroll" onclick="viewSpecialty('Internal Medicine')">Internal Medicine</div>
+            <div class="specialty-tag animate-on-scroll" onclick="viewSpecialty('Surgery')">Surgery</div>
+            <div class="specialty-tag animate-on-scroll" onclick="viewSpecialty('Pediatrics')">Pediatrics</div>
+            <div class="specialty-tag animate-on-scroll" onclick="viewSpecialty('Cardiology')">Cardiology</div>
+            <div class="specialty-tag animate-on-scroll" onclick="viewSpecialty('Neurology')">Neurology</div>
+            <div class="specialty-tag animate-on-scroll" onclick="viewSpecialty('Radiology')">Radiology</div>
+            <div class="specialty-tag animate-on-scroll" onclick="viewSpecialty('Anesthesiology')">Anesthesiology</div>
+            <div class="specialty-tag animate-on-scroll" onclick="viewSpecialty('Emergency Medicine')">Emergency Medicine</div>
+            <div class="specialty-tag animate-on-scroll" onclick="viewSpecialty('Psychiatry')">Psychiatry</div>
+            <div class="specialty-tag animate-on-scroll" onclick="viewSpecialty('Obstetrics & Gynecology')">Obstetrics & Gynecology</div>
+            <div class="specialty-tag animate-on-scroll" onclick="viewSpecialty('Oncology')">Oncology</div>
+            <div class="specialty-tag animate-on-scroll" onclick="viewSpecialty('Pathology')">Pathology</div>
+            <div class="specialty-tag animate-on-scroll" onclick="viewSpecialty('Dermatology')">Dermatology</div>
+            <div class="specialty-tag animate-on-scroll" onclick="viewSpecialty('Orthopedics')">Orthopedics</div>
+            <div class="specialty-tag animate-on-scroll" onclick="viewSpecialty('Family Medicine')">Family Medicine</div>
+            <div class="specialty-tag animate-on-scroll" onclick="viewSpecialty('Ophthalmology')">Ophthalmology</div>
         </div>
     </section>
 
@@ -652,32 +664,32 @@
             <p>Your trusted partner in medical professional certification excellence</p>
         </div>
         <div class="features-grid">
-            <div class="feature-card glass">
+            <div class="feature-card glass animate-on-scroll">
                 <div class="feature-icon">🎓</div>
                 <h3>Our Mission</h3>
                 <p>To provide world-class medical certification exams that uphold the highest standards of healthcare excellence and professional competency worldwide</p>
             </div>
-            <div class="feature-card glass">
+            <div class="feature-card glass animate-on-scroll">
                 <div class="feature-icon">🌍</div>
                 <h3>Global Reach</h3>
                 <p>Operating in over 150 countries with partnerships with leading medical institutions, hospitals, and healthcare organizations globally</p>
             </div>
-            <div class="feature-card glass">
+            <div class="feature-card glass animate-on-scroll">
                 <div class="feature-icon">⭐</div>
                 <h3>25+ Years Experience</h3>
                 <p>Since 2001, we've been setting the gold standard in medical professional certification with over 500,000 successful certifications</p>
             </div>
-            <div class="feature-card glass">
+            <div class="feature-card glass animate-on-scroll">
                 <div class="feature-icon">🏅</div>
                 <h3>Accredited Excellence</h3>
                 <p>Fully accredited by international medical boards and recognized by healthcare regulatory bodies in 150+ countries</p>
             </div>
-            <div class="feature-card glass">
+            <div class="feature-card glass animate-on-scroll">
                 <div class="feature-icon">👥</div>
                 <h3>Expert Team</h3>
                 <p>Our board consists of renowned physicians, medical educators, and healthcare leaders committed to excellence in medical education</p>
             </div>
-            <div class="feature-card glass">
+            <div class="feature-card glass animate-on-scroll">
                 <div class="feature-icon">🔬</div>
                 <h3>Innovation Leader</h3>
                 <p>Pioneering advanced assessment technologies and evidence-based exam methodologies that set industry standards</p>
@@ -762,16 +774,13 @@
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
+                    entry.target.classList.add('visible');
                 }
             });
         }, observerOptions);
 
-        document.querySelectorAll('.feature-card, .stat-card, .specialty-tag').forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(30px)';
-            el.style.transition = 'all 0.6s ease-out';
+        // Only observe elements that have the animate-on-scroll class
+        document.querySelectorAll('.animate-on-scroll').forEach(el => {
             observer.observe(el);
         });
 
