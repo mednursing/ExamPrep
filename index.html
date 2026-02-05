@@ -550,7 +550,7 @@
                 <span>🔒</span>
                 <span>AUTHORIZED CERTIFICATION PORTAL</span>
             </div>
-            <h1>44 Medical Professional Certification Excellence</h1>
+            <h1>45 Medical Professional Certification Excellence</h1>
             <p>Elevate your medical career with internationally recognized certification exams. Join thousands of healthcare professionals achieving excellence through our premium certification programs.</p>
             <div class="cta-buttons">
                 <a href="#cta-section" class="btn btn-primary">Get Started →</a>
@@ -1098,53 +1098,52 @@
     </script>
 
     <!-- ========================================== -->
-    <!-- ZOHO SALESIQ CHAT WIDGET - SIMPLIFIED -->
+    <!-- ZOHO SALESIQ CHAT WIDGET -->
     <!-- ========================================== -->
-    <script>window.$zoho=window.$zoho || {};$zoho.salesiq=$zoho.salesiq||{ready:function(){}}</script>
-    <script id="zsiqscript" src="https://salesiq.zohopublic.com/widget?wc=siq8b224c61de3775c5e03699165e49a6040479a11d88222b17b6a003a21096b3e2" defer></script>
+    <script type="text/javascript">
+        var $zoho=$zoho || {};
+        $zoho.salesiq = $zoho.salesiq || {
+            widgetcode: "siq8b224c61de3775c5e03699165e49a6040479a11d88222b17b6a003a21096b3e2",
+            values:{},
+            ready:function(){}
+        };
+        var d=document;
+        var s=d.createElement("script");
+        s.type="text/javascript";
+        s.id="zsiqscript";
+        s.defer=true;
+        s.src="https://salesiq.zohopublic.com/widget";
+        var t=d.getElementsByTagName("script")[0];
+        t.parentNode.insertBefore(s,t);
+    </script>
     
     <script>
     // ============================================
-    // SIMPLIFIED CHAT - USER CLICK TO OPEN
-    // Bot handles the conversation automatically
+    // SIMPLE CHAT OPENER
     // ============================================
     
-    var salesiqReady = false;
-    
-    // Simple function to open chat - called by button clicks
+    // Function to open chat - waits for widget to be ready
     function openChat() {
-        if (!salesiqReady) {
-            console.log('⏳ SalesIQ not ready yet, waiting...');
-            setTimeout(openChat, 500);
-            return;
-        }
-        
-        try {
-            // Simply open the chat window - bot will greet automatically
-            $zoho.salesiq.floatwindow.visible('show');
-            console.log('✅ Chat window opened');
-        } catch(e) {
-            console.log('❌ Error opening chat:', e);
+        if (typeof $zoho !== 'undefined' && 
+            $zoho.salesiq && 
+            $zoho.salesiq.floatwindow) {
+            try {
+                $zoho.salesiq.floatwindow.visible('show');
+                console.log('✅ Chat opened');
+            } catch(e) {
+                console.log('❌ Error:', e);
+                // Fallback - click the float button if it exists
+                var floatBtn = document.querySelector('[data-zsqa="zsiq_float"]') || 
+                               document.querySelector('.zsiq_floatmain');
+                if (floatBtn) floatBtn.click();
+            }
+        } else {
+            console.log('⏳ Widget loading...');
+            setTimeout(openChat, 1000);
         }
     }
     
-    // Wait for Zoho SalesIQ to be ready
-    $zoho.salesiq.ready = function() {
-        console.log('✅ Zoho SalesIQ Ready');
-        salesiqReady = true;
-        
-        // Configure bot to auto-greet when chat opens
-        try {
-            // Set up chat open handler - bot greets automatically via SalesIQ settings
-            $zoho.salesiq.floatwindow.open(function() {
-                console.log('💬 Chat window opened by user');
-            });
-        } catch(e) {
-            console.log('ℹ️ floatwindow.open callback not supported:', e);
-        }
-    };
-    
-    // Expose openChat globally for button onclick
+    // Make it globally available
     window.openChat = openChat;
     </script>
 
