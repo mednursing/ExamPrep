@@ -1107,6 +1107,27 @@
     </script>
 
     <!-- ========================================== -->
+    <!-- CRISP CHAT - BIGGER WINDOW OVERRIDE -->
+    <!-- ========================================== -->
+    <style>
+        /* Make Crisp chat window bigger */
+        #crisp-chatbox .crisp-client .cc-tlyw .cc-kxkl {
+            width: 520px !important;
+            height: 700px !important;
+        }
+        #crisp-chatbox .crisp-client .cc-tlyw .cc-kxkl .cc-nsge {
+            height: 700px !important;
+        }
+        /* Mobile: keep reasonable size */
+        @media (max-width: 600px) {
+            #crisp-chatbox .crisp-client .cc-tlyw .cc-kxkl {
+                width: 100vw !important;
+                height: 85vh !important;
+            }
+        }
+    </style>
+
+    <!-- ========================================== -->
     <!-- CRISP CHAT WIDGET -->
     <!-- ========================================== -->
     <script type="text/javascript">window.$crisp=[];window.CRISP_WEBSITE_ID="eb9dab19-bc0e-4811-8d61-765e02d08cb6";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();</script>
