@@ -1107,51 +1107,30 @@
     </script>
 
     <!-- ========================================== -->
-    <!-- ZOHO SALESIQ CHAT WIDGET -->
+    <!-- CRISP CHAT WIDGET -->
     <!-- ========================================== -->
-    <script type="text/javascript">
-        var $zoho=$zoho || {};
-        $zoho.salesiq = $zoho.salesiq || {
-            widgetcode: "siq8b224c61de3775c5e03699165e49a6040479a11d88222b17b6a003a21096b3e2",
-            values:{},
-            ready:function(){}
-        };
-        var d=document;
-        var s=d.createElement("script");
-        s.type="text/javascript";
-        s.id="zsiqscript";
-        s.defer=true;
-        s.src="https://salesiq.zohopublic.com/widget";
-        var t=d.getElementsByTagName("script")[0];
-        t.parentNode.insertBefore(s,t);
-    </script>
-    
+    <script type="text/javascript">window.$crisp=[];window.CRISP_WEBSITE_ID="eb9dab19-bc0e-4811-8d61-765e02d08cb6";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();</script>
+
     <script>
     // ============================================
     // SIMPLE CHAT OPENER
     // ============================================
-    
-    // Function to open chat - waits for widget to be ready
+
+    // Function to open chat - waits for Crisp to be ready
     function openChat() {
-        if (typeof $zoho !== 'undefined' && 
-            $zoho.salesiq && 
-            $zoho.salesiq.floatwindow) {
+        if (typeof $crisp !== 'undefined') {
             try {
-                $zoho.salesiq.floatwindow.visible('show');
-                console.log('✅ Chat opened');
+                $crisp.push(['do', 'chat:open']);
+                console.log('✅ Crisp chat opened');
             } catch(e) {
                 console.log('❌ Error:', e);
-                // Fallback - click the float button if it exists
-                var floatBtn = document.querySelector('[data-zsqa="zsiq_float"]') || 
-                               document.querySelector('.zsiq_floatmain');
-                if (floatBtn) floatBtn.click();
             }
         } else {
-            console.log('⏳ Widget loading...');
+            console.log('⏳ Crisp loading...');
             setTimeout(openChat, 1000);
         }
     }
-    
+
     // Make it globally available
     window.openChat = openChat;
     </script>
